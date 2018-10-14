@@ -84,7 +84,7 @@ public class AutoVolumeActivity extends AppCompatActivity {
      */
     private void reloadStates() {
         //저장했던 값 불러오기
-        micLevelSeekBar.setProgress(sharedPreferences.getInt(micLevelKey, 70));
+        micLevelSeekBar.setProgress(sharedPreferences.getInt(micLevelKey, 50));
         micSensitivitySeekBar.setProgress(sharedPreferences.getInt(micSensitivityKey, 50));
 
         int progressValue = sharedPreferences.getInt(intervalKey, 6);
