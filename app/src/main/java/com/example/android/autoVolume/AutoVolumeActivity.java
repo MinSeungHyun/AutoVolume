@@ -42,7 +42,6 @@ public class AutoVolumeActivity extends AppCompatActivity {
         EventBus.getDefault().post(new ChangeMIcLevelEvent(micSensitivitySeekBar.getProgress()));
         EventBus.getDefault().post(new ChangeMIcLevelEvent(micLevelSeekBar.getProgress()));
         noiseProgressBar.setMax(130 - sharedPreferences.getInt(micSensitivityKey, 50));
-        //
     }
 
     /**
