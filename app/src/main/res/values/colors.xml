@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#673ab7</color>
+    <color name="colorAccent">#9a67ea</color>
+    <color name="colorPrimaryDark">#320b86</color>
+
+    <color name="divider">#19000000</color>
+
+    <!--rangeSeekBar colors-->
+    <color name="bar_color">@color/divider</color>
+    <color name="bar_highlight_color">@color/colorAccent</color>
+    <color name="thumb_color">@color/colorAccent</color>
+    <color name="thumb_color_pressed">#8a5dd1</color>
+</resources>
