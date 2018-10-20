@@ -283,6 +283,7 @@ public class ActivityMain extends AppCompatActivity {
                     Intent intent = new Intent(ActivityMain.this, ActivityAutoVolume.class);
                     startActivity(intent);
                 } else {
+                    //강조
                     ValueAnimator animation = ValueAnimator.ofFloat(1f, 0f);
                     animation.setDuration(1000);
                     animation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -299,51 +300,64 @@ public class ActivityMain extends AppCompatActivity {
         LinearLayout.OnClickListener itemLinearLayoutClickListener = new LinearLayout.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (view.getId()) {
-                    case R.id.linearLayout_1:
-                        if (switchPreference.getBoolean(KeySaved.ringtoneStateKey, false)) {
-                            switchPreferenceEditor.putBoolean(KeySaved.ringtoneStateKey, false);
-                            switchPreferenceEditor.apply();
-                            setIconTV(imageView_1, textView_1, false);
-                        } else {
-                            switchPreferenceEditor.putBoolean(KeySaved.ringtoneStateKey, true);
-                            switchPreferenceEditor.apply();
-                            setIconTV(imageView_1, textView_1, true);
+                if (mainSwitch.isChecked()) {
+                    switch (view.getId()) {
+                        case R.id.linearLayout_1:
+                            if (switchPreference.getBoolean(KeySaved.ringtoneStateKey, false)) {
+                                switchPreferenceEditor.putBoolean(KeySaved.ringtoneStateKey, false);
+                                switchPreferenceEditor.apply();
+                                setIconTV(imageView_1, textView_1, false);
+                            } else {
+                                switchPreferenceEditor.putBoolean(KeySaved.ringtoneStateKey, true);
+                                switchPreferenceEditor.apply();
+                                setIconTV(imageView_1, textView_1, true);
+                            }
+                            break;
+                        case R.id.linearLayout_2:
+                            if (switchPreference.getBoolean(KeySaved.mediaStateKey, false)) {
+                                switchPreferenceEditor.putBoolean(KeySaved.mediaStateKey, false);
+                                switchPreferenceEditor.apply();
+                                setIconTV(imageView_2, textView_2, false);
+                            } else {
+                                switchPreferenceEditor.putBoolean(KeySaved.mediaStateKey, true);
+                                switchPreferenceEditor.apply();
+                                setIconTV(imageView_2, textView_2, true);
+                            }
+                            break;
+                        case R.id.linearLayout_3:
+                            if (switchPreference.getBoolean(KeySaved.notificationsStateKey, false)) {
+                                switchPreferenceEditor.putBoolean(KeySaved.notificationsStateKey, false);
+                                switchPreferenceEditor.apply();
+                                setIconTV(imageView_3, textView_3, false);
+                            } else {
+                                switchPreferenceEditor.putBoolean(KeySaved.notificationsStateKey, true);
+                                switchPreferenceEditor.apply();
+                                setIconTV(imageView_3, textView_3, true);
+                            }
+                            break;
+                        case R.id.linearLayout_4:
+                            if (switchPreference.getBoolean(KeySaved.alarmStateKey, false)) {
+                                switchPreferenceEditor.putBoolean(KeySaved.alarmStateKey, false);
+                                switchPreferenceEditor.apply();
+                                setIconTV(imageView_4, textView_4, false);
+                            } else {
+                                switchPreferenceEditor.putBoolean(KeySaved.alarmStateKey, true);
+                                switchPreferenceEditor.apply();
+                                setIconTV(imageView_4, textView_4, true);
+                            }
+                            break;
+                    }
+                } else {
+                    //강조
+                    ValueAnimator animation = ValueAnimator.ofFloat(1f, 0f);
+                    animation.setDuration(1000);
+                    animation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                            highlightSwitch.setAlpha((float) valueAnimator.getAnimatedValue());
                         }
-                        break;
-                    case R.id.linearLayout_2:
-                        if (switchPreference.getBoolean(KeySaved.mediaStateKey, false)) {
-                            switchPreferenceEditor.putBoolean(KeySaved.mediaStateKey, false);
-                            switchPreferenceEditor.apply();
-                            setIconTV(imageView_2, textView_2, false);
-                        } else {
-                            switchPreferenceEditor.putBoolean(KeySaved.mediaStateKey, true);
-                            switchPreferenceEditor.apply();
-                            setIconTV(imageView_2, textView_2, true);
-                        }
-                        break;
-                    case R.id.linearLayout_3:
-                        if (switchPreference.getBoolean(KeySaved.notificationsStateKey, false)) {
-                            switchPreferenceEditor.putBoolean(KeySaved.notificationsStateKey, false);
-                            switchPreferenceEditor.apply();
-                            setIconTV(imageView_3, textView_3, false);
-                        } else {
-                            switchPreferenceEditor.putBoolean(KeySaved.notificationsStateKey, true);
-                            switchPreferenceEditor.apply();
-                            setIconTV(imageView_3, textView_3, true);
-                        }
-                        break;
-                    case R.id.linearLayout_4:
-                        if (switchPreference.getBoolean(KeySaved.alarmStateKey, false)) {
-                            switchPreferenceEditor.putBoolean(KeySaved.alarmStateKey, false);
-                            switchPreferenceEditor.apply();
-                            setIconTV(imageView_4, textView_4, false);
-                        } else {
-                            switchPreferenceEditor.putBoolean(KeySaved.alarmStateKey, true);
-                            switchPreferenceEditor.apply();
-                            setIconTV(imageView_4, textView_4, true);
-                        }
-                        break;
+                    });
+                    animation.start();
                 }
             }
         };
@@ -405,10 +419,6 @@ public class ActivityMain extends AppCompatActivity {
         textView_2.setAlpha(1f);
         textView_3.setAlpha(1f);
         textView_4.setAlpha(1f);
-        linearLayout_1.setClickable(true);
-        linearLayout_2.setClickable(true);
-        linearLayout_3.setClickable(true);
-        linearLayout_4.setClickable(true);
         final TypedValue outValue = new TypedValue();
         getApplicationContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
         topLinearLayout.setBackgroundResource(outValue.resourceId);
@@ -427,10 +437,6 @@ public class ActivityMain extends AppCompatActivity {
         textView_2.setAlpha(0.5f);
         textView_3.setAlpha(0.5f);
         textView_4.setAlpha(0.5f);
-        linearLayout_1.setClickable(false);
-        linearLayout_2.setClickable(false);
-        linearLayout_3.setClickable(false);
-        linearLayout_4.setClickable(false);
         topLinearLayout.setBackground(null);
     }
 
