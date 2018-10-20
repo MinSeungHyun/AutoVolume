@@ -71,6 +71,7 @@ public class ActivityMain extends AppCompatActivity {
 
         reloadSwitchState();
         reloadTextState();
+        reloadIconTV();
 
         setListeners();
 
@@ -79,8 +80,8 @@ public class ActivityMain extends AppCompatActivity {
         else mainSwitch.setChecked(false);
 
         //mainSwitch 값에 따라 항목 변경
-        if (mainSwitch.isChecked()) setEnabled();
-        else setDisabled();
+        if (mainSwitch.isChecked()) setEnableByMainSwitch();
+        else setDisableByMainSwitch();
 
     }
 
@@ -189,7 +190,7 @@ public class ActivityMain extends AppCompatActivity {
     /**
      * 저장되었던 스위치 상태를 가져오는 메소드
      */
-    public void reloadSwitchState() {
+    private void reloadSwitchState() {
         Boolean isChecked = switchPreference.getBoolean(String.valueOf(mainSwitch.getTag()), false);
         Boolean isChecked1 = switchPreference.getBoolean(String.valueOf(switch_1.getTag()), false);
         Boolean isChecked2 = switchPreference.getBoolean(String.valueOf(switch_2.getTag()), false);
@@ -205,7 +206,7 @@ public class ActivityMain extends AppCompatActivity {
     /**
      * 저장되었던 최소/최대 볼륨을 가져오는 메소드
      */
-    public void reloadTextState() {
+    private void reloadTextState() {
         int sMinRingtone = ringtonePreference.getInt("minVolume", 0);
         int sMaxRingtone = ringtonePreference.getInt("maxVolume", audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
         int sMinMedia = mediaPreference.getInt("minVolume", 0);
@@ -226,14 +227,38 @@ public class ActivityMain extends AppCompatActivity {
     }
 
     /**
+     * 항목 스위치의 값에 따라 아이콘과 텍스트 상태 변경
+     */
+    private void reloadIconTV() {
+        if (switch_1.isChecked()) {
+            setIconTV(imageView_1, textView_1, true);
+        } else {
+            setIconTV(imageView_1, textView_1, false);
+        }
+        if (switch_2.isChecked()) {
+            setIconTV(imageView_2, textView_2, true);
+        } else {
+            setIconTV(imageView_2, textView_2, false);
+        }
+        if (switch_3.isChecked()) {
+            setIconTV(imageView_3, textView_3, true);
+        } else {
+            setIconTV(imageView_3, textView_3, false);
+        }
+        if (switch_4.isChecked()) {
+            setIconTV(imageView_4, textView_4, true);
+        } else {
+            setIconTV(imageView_4, textView_4, false);
+        }
+    }
+
+    /**
      * 리스너 설정
      */
     private void setListeners() {
-        //mainSwitch 의 리스너
         mainSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //권한 허용됨, 상태저장
                 String switchTag = String.valueOf(mainSwitch.getTag());
                 switchPreferenceEditor.putBoolean(switchTag, isChecked);
                 switchPreferenceEditor.commit();
@@ -267,7 +292,7 @@ public class ActivityMain extends AppCompatActivity {
                         switchPreferenceEditor.commit();
                     } else { //권한 허용됨
                         //활성화
-                        setEnabled();
+                        setEnableByMainSwitch();
                         //서비스 시작
                         Intent service = new Intent(ActivityMain.this, ServiceAutoVolume.class);
                         startService(service);
@@ -275,7 +300,7 @@ public class ActivityMain extends AppCompatActivity {
                     }
                 } else {
                     //비활성화
-                    setDisabled();
+                    setDisableByMainSwitch();
                     //서비스 종료
                     EventBus.getDefault().post(new EventSwitchState(false));
                     Intent service = new Intent(ActivityMain.this, ServiceAutoVolume.class);
@@ -284,7 +309,6 @@ public class ActivityMain extends AppCompatActivity {
             }
         });
 
-        //바꿘 스위치의 참조로 항목의 상태를 저장하는 리스너
         Switch.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -294,19 +318,36 @@ public class ActivityMain extends AppCompatActivity {
                 if (isChecked) {
                     switch (buttonView.getId()) {
                         case R.id.switch_1:
-                            imageView_1.setImageResource(R.drawable.ic_baseline_ring_volume_colored_24px);
-                            textView_1.setTextColor(getColor(R.color.colorPrimary));
+                            setIconTV(imageView_1, textView_1, true);
+                            break;
+                        case R.id.switch_2:
+                            setIconTV(imageView_2, textView_2, true);
+                            break;
+                        case R.id.switch_3:
+                            setIconTV(imageView_3, textView_3, true);
+                            break;
+                        case R.id.switch_4:
+                            setIconTV(imageView_4, textView_4, true);
+                            break;
                     }
                 } else {
                     switch (buttonView.getId()) {
                         case R.id.switch_1:
-                            imageView_1.setImageResource(R.drawable.ic_baseline_ring_volume_24px);
-                            textView_1.setTextColor(Color.parseColor("#000000"));
+                            setIconTV(imageView_1, textView_1, false);
+                            break;
+                        case R.id.switch_2:
+                            setIconTV(imageView_2, textView_2, false);
+                            break;
+                        case R.id.switch_3:
+                            setIconTV(imageView_3, textView_3, false);
+                            break;
+                        case R.id.switch_4:
+                            setIconTV(imageView_4, textView_4, false);
+                            break;
                     }
                 }
             }
         };
-
         switch_1.setOnCheckedChangeListener(onCheckedChangeListener);
         switch_2.setOnCheckedChangeListener(onCheckedChangeListener);
         switch_3.setOnCheckedChangeListener(onCheckedChangeListener);
@@ -332,7 +373,6 @@ public class ActivityMain extends AppCompatActivity {
             }
         });
 
-        //각 항목들의 클릭을 받아 액티비티를 여는 리스너
         LinearLayout.OnClickListener linearLayoutOnClickListener = new LinearLayout.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -354,11 +394,65 @@ public class ActivityMain extends AppCompatActivity {
                 startActivity(intent);
             }
         };
-
         linearLayout_1.setOnClickListener(linearLayoutOnClickListener);
         linearLayout_2.setOnClickListener(linearLayoutOnClickListener);
         linearLayout_3.setOnClickListener(linearLayoutOnClickListener);
         linearLayout_4.setOnClickListener(linearLayoutOnClickListener);
+    }
+
+    /**
+     * 아이콘과 글씨를 활성화 또는 비활성화
+     */
+    private void setIconTV(ImageView imageView, TextView textView, Boolean isEnable) {
+        if (isEnable) {
+            imageView.setColorFilter(getColor(R.color.colorPrimary));
+            textView.setTextColor(getColor(R.color.colorPrimary));
+        } else {
+            imageView.setColorFilter(null);
+            textView.setTextColor(Color.parseColor("#000000"));
+        }
+    }
+
+    /**
+     * mainSwitch 의 값에따라 항목들 활성화
+     */
+    public void setEnableByMainSwitch() {
+        mainTextView.setAlpha(1f);
+        switch_1.setEnabled(true);
+        switch_2.setEnabled(true);
+        switch_3.setEnabled(true);
+        switch_4.setEnabled(true);
+        imageView_1.setAlpha(1f);
+        imageView_2.setAlpha(1f);
+        imageView_3.setAlpha(1f);
+        imageView_4.setAlpha(1f);
+        textView_1.setAlpha(1f);
+        textView_2.setAlpha(1f);
+        textView_3.setAlpha(1f);
+        textView_4.setAlpha(1f);
+        final TypedValue outValue = new TypedValue();
+        getApplicationContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
+        topLinearLayout.setBackgroundResource(outValue.resourceId);
+    }
+
+    /**
+     * mainSwitch 의 값에따라 항목들 비활성화
+     */
+    public void setDisableByMainSwitch() {
+        mainTextView.setAlpha(0.8f);
+        switch_1.setEnabled(false);
+        switch_2.setEnabled(false);
+        switch_3.setEnabled(false);
+        switch_4.setEnabled(false);
+        imageView_1.setAlpha(0.5f);
+        imageView_2.setAlpha(0.5f);
+        imageView_3.setAlpha(0.5f);
+        imageView_4.setAlpha(0.5f);
+        textView_1.setAlpha(0.5f);
+        textView_2.setAlpha(0.5f);
+        textView_3.setAlpha(0.5f);
+        textView_4.setAlpha(0.5f);
+        topLinearLayout.setBackground(null);
     }
 
     /**
@@ -372,32 +466,6 @@ public class ActivityMain extends AppCompatActivity {
             }
         }
         return false;
-    }
-
-    /**
-     * mainSwitch 의 값에따라 항목들 활성화
-     */
-    public void setEnabled() {
-        mainTextView.setAlpha(1f);
-        switch_1.setEnabled(true);
-        switch_2.setEnabled(true);
-        switch_3.setEnabled(true);
-        switch_4.setEnabled(true);
-        final TypedValue outValue = new TypedValue();
-        getApplicationContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
-        topLinearLayout.setBackgroundResource(outValue.resourceId);
-    }
-
-    /**
-     * mainSwitch 의 값에따라 항목들 비활성화
-     */
-    public void setDisabled() {
-        mainTextView.setAlpha(0.8f);
-        switch_1.setEnabled(false);
-        switch_2.setEnabled(false);
-        switch_3.setEnabled(false);
-        switch_4.setEnabled(false);
-        topLinearLayout.setBackground(null);
     }
 
     /**
