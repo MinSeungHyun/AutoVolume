@@ -1,6 +1,7 @@
 package com.example.android.autoVolume;
 
 class KeySaved {
+    //ActivityRangePopup
     static final String rangePreferenceKey = "volume_range";
     static final String ringtoneMinKey = "ringtone_min";
     static final String mediaMinKey = "media_min";
@@ -10,4 +11,13 @@ class KeySaved {
     static final String mediaMaxKey = "media_max";
     static final String notificationsMaxKey = "notifications_max";
     static final String alarmMaxKey = "alarm_max";
+
+    //MainActivity
+    static final String switchPreferenceKey = "switch_state";
+
+    //ActivityAutoVolume
+    static final String autoVolumePreferenceKey = "auto_volume";
+    static final String micLevelKey = "mic_level";
+    static final String micSensitivityKey = "mic_sensitivity";
+    static final String intervalKey = "interval";
 }

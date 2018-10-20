@@ -170,7 +170,7 @@ public class ActivityMain extends AppCompatActivity {
     @SuppressLint("CommitPrefEdits")
     private void getReferences() {
         //switchPreference 참조 생성
-        switchPreference = getSharedPreferences("switchState", MODE_PRIVATE);
+        switchPreference = getSharedPreferences(KeySaved.switchPreferenceKey, MODE_PRIVATE);
         volumeRangePreference = getSharedPreferences(KeySaved.rangePreferenceKey, MODE_PRIVATE);
         switchPreferenceEditor = switchPreference.edit();
 

@@ -51,9 +51,9 @@ public class ServiceAutoVolume extends Service {
         startForeground(1, builder.build());
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        SharedPreferences sharedPreferences = getSharedPreferences("autoVolume", MODE_PRIVATE);
-        micLevel = sharedPreferences.getInt("mic_level", 100);
-        micSensitivity = sharedPreferences.getInt("mic_sensitivity", 50);
+        SharedPreferences sharedPreferences = getSharedPreferences(KeySaved.autoVolumePreferenceKey, MODE_PRIVATE);
+        micLevel = sharedPreferences.getInt(KeySaved.micLevelKey, 100);
+        micSensitivity = sharedPreferences.getInt(KeySaved.micSensitivityKey, 50);
 
         isToastShowing = false;
         isServiceRunning = true;
