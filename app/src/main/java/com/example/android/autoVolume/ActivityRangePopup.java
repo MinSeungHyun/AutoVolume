@@ -29,7 +29,8 @@ public class ActivityRangePopup extends Activity {
     //오디오 타입 식별을 위한 변수들
     int audioType;
     String audioName;
-    String keyName;
+    String minKeyName;
+    String maxKeyName;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,32 +64,36 @@ public class ActivityRangePopup extends Activity {
             case "view_1":
                 audioType = AudioManager.STREAM_RING;
                 audioName = getString(R.string.ringtone);
-                keyName = "ringtone";
+                minKeyName = KeySaved.ringtoneMinKey;
+                maxKeyName = KeySaved.ringtoneMaxKey;
                 break;
             case "view_2":
                 audioType = AudioManager.STREAM_MUSIC;
                 audioName = getString(R.string.media);
-                keyName = "media";
+                minKeyName = KeySaved.mediaMinKey;
+                maxKeyName = KeySaved.mediaMaxKey;
                 break;
             case "view_3":
                 audioType = AudioManager.STREAM_NOTIFICATION;
                 audioName = getString(R.string.notifications);
-                keyName = "notifications";
+                minKeyName = KeySaved.notificationsMinKey;
+                maxKeyName = KeySaved.notificationsMaxKey;
                 break;
             case "view_4":
                 audioType = AudioManager.STREAM_ALARM;
                 audioName = getString(R.string.alarm);
-                keyName = "alarm";
+                minKeyName = KeySaved.alarmMinKey;
+                maxKeyName = KeySaved.alarmMaxKey;
                 break;
         }
 
         //sharedPreferences 설정
-        sharedPreferences = getSharedPreferences(keyName, 0);
+        sharedPreferences = getSharedPreferences(KeySaved.rangePreferenceKey, 0);
         editor = sharedPreferences.edit();
 
         //저장된 값 설정, 초기 설정
-        rangeSeekBar.setMinStartValue(sharedPreferences.getInt("minVolume", 0))
-                .setMaxStartValue(sharedPreferences.getInt("maxVolume", audioManager.getStreamMaxVolume(audioType)))
+        rangeSeekBar.setMinStartValue(sharedPreferences.getInt(minKeyName, 0))
+                .setMaxStartValue(sharedPreferences.getInt(maxKeyName, audioManager.getStreamMaxVolume(audioType)))
                 .setGap(1)
                 .setMaxValue(audioManager.getStreamMaxVolume(audioType))
                 .apply();
@@ -100,8 +105,8 @@ public class ActivityRangePopup extends Activity {
         rangeSeekBar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
             @Override
             public void valueChanged(Number minValue, Number maxValue) {
-                editor.putInt("minVolume", minValue.intValue());
-                editor.putInt("maxVolume", maxValue.intValue());
+                editor.putInt(minKeyName, minValue.intValue());
+                editor.putInt(maxKeyName, maxValue.intValue());
                 editor.apply();
 
 
@@ -109,8 +114,8 @@ public class ActivityRangePopup extends Activity {
                 rightText.setText(String.valueOf(maxValue));
 
                 //이벤트버스로 메인액티비티의 텍스트뷰 변경
-                EventBus.getDefault().post(new EventMinMaxTV(true, keyName, minValue.intValue()));
-                EventBus.getDefault().post(new EventMinMaxTV(false, keyName, maxValue.intValue()));
+                EventBus.getDefault().post(new EventMinMaxTV(minKeyName, minValue.intValue()));
+                EventBus.getDefault().post(new EventMinMaxTV(maxKeyName, maxValue.intValue()));
             }
         });
     }

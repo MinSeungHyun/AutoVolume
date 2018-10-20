@@ -45,9 +45,8 @@ public class ActivityMain extends AppCompatActivity {
     LinearLayout topLinearLayout, linearLayout_1, linearLayout_2, linearLayout_3, linearLayout_4;
     ImageView imageView_1, imageView_2, imageView_3, imageView_4;
     //sharedPreference
-    SharedPreferences switchPreference;
+    SharedPreferences switchPreference, volumeRangePreference;
     SharedPreferences.Editor switchPreferenceEditor;
-    SharedPreferences ringtonePreference, mediaPreference, notificationsPreference, alarmPreference;
     //audioManager
     AudioManager audioManager;
     //etc
@@ -99,36 +98,31 @@ public class ActivityMain extends AppCompatActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void changeTV(EventMinMaxTV event) {
-        if (event.isMinValue) {
-            switch (event.keyName) {
-                case "ringtone":
-                    minRingtone.setText(String.format(getString(R.string.min_volume), event.value));
-                    break;
-                case "media":
-                    minMedia.setText(String.format(getString(R.string.min_volume), event.value));
-                    break;
-                case "notifications":
-                    minNotifications.setText(String.format(getString(R.string.min_volume), event.value));
-                    break;
-                case "alarm":
-                    minAlarm.setText(String.format(getString(R.string.min_volume), event.value));
-                    break;
-            }
-        } else {
-            switch (event.keyName) {
-                case "ringtone":
-                    maxRingtone.setText(String.format(getString(R.string.max_volume), event.value));
-                    break;
-                case "media":
-                    maxMedia.setText(String.format(getString(R.string.max_volume), event.value));
-                    break;
-                case "notifications":
-                    maxNotifications.setText(String.format(getString(R.string.max_volume), event.value));
-                    break;
-                case "alarm":
-                    maxAlarm.setText(String.format(getString(R.string.max_volume), event.value));
-                    break;
-            }
+        switch (event.keyName) {
+            case KeySaved.ringtoneMinKey:
+                minRingtone.setText(String.format(getString(R.string.min_volume), event.value));
+                break;
+            case KeySaved.mediaMinKey:
+                minMedia.setText(String.format(getString(R.string.min_volume), event.value));
+                break;
+            case KeySaved.notificationsMinKey:
+                minNotifications.setText(String.format(getString(R.string.min_volume), event.value));
+                break;
+            case KeySaved.alarmMinKey:
+                minAlarm.setText(String.format(getString(R.string.min_volume), event.value));
+                break;
+            case KeySaved.ringtoneMaxKey:
+                maxRingtone.setText(String.format(getString(R.string.max_volume), event.value));
+                break;
+            case KeySaved.mediaMaxKey:
+                maxMedia.setText(String.format(getString(R.string.max_volume), event.value));
+                break;
+            case KeySaved.notificationsMaxKey:
+                maxNotifications.setText(String.format(getString(R.string.max_volume), event.value));
+                break;
+            case KeySaved.alarmMaxKey:
+                maxAlarm.setText(String.format(getString(R.string.max_volume), event.value));
+                break;
         }
     }
 
@@ -177,11 +171,8 @@ public class ActivityMain extends AppCompatActivity {
     private void getReferences() {
         //switchPreference 참조 생성
         switchPreference = getSharedPreferences("switchState", MODE_PRIVATE);
+        volumeRangePreference = getSharedPreferences(KeySaved.rangePreferenceKey, MODE_PRIVATE);
         switchPreferenceEditor = switchPreference.edit();
-        ringtonePreference = getSharedPreferences("ringtone", MODE_PRIVATE);
-        mediaPreference = getSharedPreferences("media", MODE_PRIVATE);
-        notificationsPreference = getSharedPreferences("notifications", MODE_PRIVATE);
-        alarmPreference = getSharedPreferences("alarm", MODE_PRIVATE);
 
         //audioManager
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -207,14 +198,14 @@ public class ActivityMain extends AppCompatActivity {
      * 저장되었던 최소/최대 볼륨을 가져오는 메소드
      */
     private void reloadTextState() {
-        int sMinRingtone = ringtonePreference.getInt("minVolume", 0);
-        int sMaxRingtone = ringtonePreference.getInt("maxVolume", audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
-        int sMinMedia = mediaPreference.getInt("minVolume", 0);
-        int sMaxMedia = mediaPreference.getInt("maxVolume", audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
-        int sMinNotifications = notificationsPreference.getInt("minVolume", 0);
-        int sMaxNotifications = notificationsPreference.getInt("maxVolume", audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION));
-        int sMinAlarm = alarmPreference.getInt("minVolume", 0);
-        int sMaxAlarm = alarmPreference.getInt("maxVolume", audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
+        int sMinRingtone = volumeRangePreference.getInt(KeySaved.ringtoneMinKey, 0);
+        int sMaxRingtone = volumeRangePreference.getInt(KeySaved.ringtoneMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
+        int sMinMedia = volumeRangePreference.getInt(KeySaved.mediaMinKey, 0);
+        int sMaxMedia = volumeRangePreference.getInt(KeySaved.mediaMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+        int sMinNotifications = volumeRangePreference.getInt(KeySaved.notificationsMinKey, 0);
+        int sMaxNotifications = volumeRangePreference.getInt(KeySaved.notificationsMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION));
+        int sMinAlarm = volumeRangePreference.getInt(KeySaved.alarmMinKey, 0);
+        int sMaxAlarm = volumeRangePreference.getInt(KeySaved.alarmMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
 
         minRingtone.setText(String.format(getString(R.string.min_volume), sMinRingtone));
         maxRingtone.setText(String.format(getString(R.string.max_volume), sMaxRingtone));
