@@ -1,9 +1,9 @@
 package com.example.android.autoVolume;
 
-class ChangeMIcLevelEvent {
+class EventMIcLevel {
     int micLevel;
 
-    ChangeMIcLevelEvent(int micLevel) {
+    EventMIcLevel(int micLevel) {
         this.micLevel = micLevel;
     }
 }

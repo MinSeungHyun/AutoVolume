@@ -22,7 +22,7 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.Objects;
 
-public class AutoVolumeService extends Service {
+public class ServiceAutoVolume extends Service {
     private static final double EMA_FILTER = 0.6;
     private static final double ampl = 10 * Math.exp(-2);
     private MediaRecorder mediaRecorder;
@@ -62,26 +62,26 @@ public class AutoVolumeService extends Service {
     }
 
     /**
-     * ChangeMIcLevelEvent 를 받음
+     * EventMIcLevel 를 받음
      */
     @Subscribe
-    public void changeMIcLevelEvent(ChangeMIcLevelEvent event) {
+    public void changeMIcLevelEvent(EventMIcLevel event) {
         micLevel = event.micLevel;
     }
 
     /**
-     * ChangeMicSensitivityEvent 를 받음
+     * EventMicSensitivity 를 받음
      */
     @Subscribe
-    public void changeMicSensitivityEvent(ChangeMicSensitivityEvent event) {
+    public void changeMicSensitivityEvent(EventMicSensitivity event) {
         micSensitivity = event.value;
     }
 
     /**
-     * ChangeSwitchStateEvent 를 받음
+     * EventSwitchState 를 받음
      */
     @Subscribe
-    public void changeSwitchStateEvent(ChangeSwitchStateEvent event) {
+    public void changeSwitchStateEvent(EventSwitchState event) {
         isServiceRunning = event.isChecked;
     }
 
@@ -176,19 +176,19 @@ public class AutoVolumeService extends Service {
         //SDK 가 26이상이면 channel 설정, 아니면 일반 설정
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder = new Notification.Builder(AutoVolumeService.this, "notification");
+            builder = new Notification.Builder(ServiceAutoVolume.this, "notification");
 
             NotificationChannel notificationChannel = new NotificationChannel("notification", getString(R.string.app_name), NotificationManager.IMPORTANCE_MIN);
             notificationChannel.setShowBadge(false);
             Objects.requireNonNull(notificationManager).createNotificationChannel(notificationChannel);
         } else {
-            builder = new Notification.Builder(AutoVolumeService.this);
+            builder = new Notification.Builder(ServiceAutoVolume.this);
         }
 
         //알림 클릭시 나올 액티비티
-        PendingIntent pendingIntent = PendingIntent.getActivity(AutoVolumeService.this,
+        PendingIntent pendingIntent = PendingIntent.getActivity(ServiceAutoVolume.this,
                 0,
-                new Intent(getApplicationContext(), MainActivity.class),
+                new Intent(getApplicationContext(), ActivityMain.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         //builder 설정
@@ -212,7 +212,7 @@ public class AutoVolumeService extends Service {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(AutoVolumeService.this, getString(R.string.app_name) + ": " + getString(R.string.turn_off_mute), Toast.LENGTH_LONG).show();
+                                Toast.makeText(ServiceAutoVolume.this, getString(R.string.app_name) + ": " + getString(R.string.turn_off_mute), Toast.LENGTH_LONG).show();
                             }
                         });
                         isToastShowing = true;
@@ -221,8 +221,8 @@ public class AutoVolumeService extends Service {
                     isToastShowing = false;
                     //데시벨 구하기
                     int decibel = getDecibel() + (micLevel - 100);
-                    if (AutoVolumeActivity.isRunning) {
-                        EventBus.getDefault().post(new ChangeProgressEvent(decibel));
+                    if (ActivityAutoVolume.isRunning) {
+                        EventBus.getDefault().post(new EventProgress(decibel));
                     }
                     setVolume(decibel);
 

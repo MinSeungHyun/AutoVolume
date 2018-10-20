@@ -15,7 +15,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class AutoVolumeActivity extends AppCompatActivity {
+public class ActivityAutoVolume extends AppCompatActivity {
     static final String micLevelKey = "mic_level";
     static final String micSensitivityKey = "mic_sensitivity";
     static final String intervalKey = "interval";
@@ -39,8 +39,8 @@ public class AutoVolumeActivity extends AppCompatActivity {
         setListener();
 
         //초기화
-        EventBus.getDefault().post(new ChangeMIcLevelEvent(micSensitivitySeekBar.getProgress()));
-        EventBus.getDefault().post(new ChangeMIcLevelEvent(micLevelSeekBar.getProgress()));
+        EventBus.getDefault().post(new EventMIcLevel(micSensitivitySeekBar.getProgress()));
+        EventBus.getDefault().post(new EventMIcLevel(micLevelSeekBar.getProgress()));
         noiseProgressBar.setMax(130 - sharedPreferences.getInt(micSensitivityKey, 50));
     }
 
@@ -55,10 +55,10 @@ public class AutoVolumeActivity extends AppCompatActivity {
     }
 
     /**
-     * ChangeProgressEvent 를 받는 메소드를 작성한다
+     * EventProgress 를 받는 메소드를 작성한다
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void changeProgressEvent(ChangeProgressEvent event) {
+    public void changeProgressEvent(EventProgress event) {
         noiseProgressBar.setProgress(event.decibel);
     }
 
@@ -124,7 +124,7 @@ public class AutoVolumeActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 editor.putInt(micLevelKey, progress);
                 editor.apply();
-                EventBus.getDefault().post(new ChangeMIcLevelEvent(progress));
+                EventBus.getDefault().post(new EventMIcLevel(progress));
             }
 
             @Override
@@ -143,7 +143,7 @@ public class AutoVolumeActivity extends AppCompatActivity {
                 editor.putInt(micSensitivityKey, progress);
                 editor.apply();
                 noiseProgressBar.setMax(130 - progress);
-                EventBus.getDefault().post(new ChangeMicSensitivityEvent(progress));
+                EventBus.getDefault().post(new EventMicSensitivity(progress));
             }
 
             @Override

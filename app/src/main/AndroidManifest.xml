@@ -14,23 +14,23 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity
-            android:name=".MainActivity"
+            android:name=".ActivityMain"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AutoVolumeActivity">
+        <activity android:name=".ActivityAutoVolume">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".ActivityMain" />
         </activity>
         <activity
-            android:name=".RangePopupActivity"
+            android:name=".ActivityRangePopup"
             android:theme="@style/Theme.AppCompat.Dialog" />
 
-        <service android:name=".AutoVolumeService" />
+        <service android:name=".ServiceAutoVolume" />
     </application>
 
 </manifest>

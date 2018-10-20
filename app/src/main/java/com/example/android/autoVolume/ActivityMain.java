@@ -35,7 +35,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity {
+public class ActivityMain extends AppCompatActivity {
     //view
     TextView mainTextView, textView_1, textView_2, textView_3, textView_4,
             minRingtone, maxRingtone, minMedia, maxMedia, minNotifications, maxNotifications, minAlarm, maxAlarm;
@@ -93,10 +93,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * ChangeMinMaxTVEvent 를 받아서 볼륨 범위 텍스트를 변경한다
+     * EventMinMaxTV 를 받아서 볼륨 범위 텍스트를 변경한다
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void changeTV(ChangeMinMaxTVEvent event) {
+    public void changeTV(EventMinMaxTV event) {
         if (event.isMinValue) {
             switch (event.keyName) {
                 case "ringtone":
@@ -238,10 +238,10 @@ public class MainActivity extends AppCompatActivity {
                 switchPreferenceEditor.commit();
                 if (isChecked) {
                     //권한 허용 여부 확인하고 거부되었으면 팝업 띄움
-                    Boolean permissionGranted = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+                    Boolean permissionGranted = ContextCompat.checkSelfPermission(ActivityMain.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
                     if (!permissionGranted) {
                         //권한 거부됨
-                        new AlertDialog.Builder(MainActivity.this)
+                        new AlertDialog.Builder(ActivityMain.this)
                                 .setTitle(getString(R.string.notice))
                                 .setMessage(getString(R.string.permission_denied_message))
                                 .setNeutralButton(getString(R.string.setting), new DialogInterface.OnClickListener() {
@@ -268,16 +268,16 @@ public class MainActivity extends AppCompatActivity {
                         //활성화
                         setEnabled();
                         //서비스 시작
-                        Intent service = new Intent(MainActivity.this, AutoVolumeService.class);
+                        Intent service = new Intent(ActivityMain.this, ServiceAutoVolume.class);
                         startService(service);
-                        EventBus.getDefault().post(new ChangeSwitchStateEvent(true));
+                        EventBus.getDefault().post(new EventSwitchState(true));
                     }
                 } else {
                     //비활성화
                     setDisabled();
                     //서비스 종료
-                    EventBus.getDefault().post(new ChangeSwitchStateEvent(false));
-                    Intent service = new Intent(MainActivity.this, AutoVolumeService.class);
+                    EventBus.getDefault().post(new EventSwitchState(false));
+                    Intent service = new Intent(ActivityMain.this, ServiceAutoVolume.class);
                     stopService(service);
                 }
             }
@@ -304,10 +304,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (mainSwitch.isChecked()) {
                     //체크 되있으면 원래대로 실행
-                    Intent intent = new Intent(MainActivity.this, RangePopupActivity.class);
+                    Intent intent = new Intent(ActivityMain.this, ActivityRangePopup.class);
                     switch (view.getId()) {
                         case R.id.top_linearLayout:
-                            intent = new Intent(MainActivity.this, AutoVolumeActivity.class);
+                            intent = new Intent(ActivityMain.this, ActivityAutoVolume.class);
                             break;
                         case R.id.linearLayout_1:
                             intent.putExtra("viewName", "view_1");
@@ -351,7 +351,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isServiceRunning() {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (AutoVolumeService.class.getName().equals(service.service.getClassName())) {
+            if (ServiceAutoVolume.class.getName().equals(service.service.getClassName())) {
                 return true;
             }
         }
@@ -441,7 +441,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         //여기에 딜레이 후 시작할 작업들을 입력
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+                        ActivityCompat.requestPermissions(ActivityMain.this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
                     }
                 }, 2000);
             }

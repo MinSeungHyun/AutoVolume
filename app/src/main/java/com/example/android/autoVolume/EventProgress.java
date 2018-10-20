@@ -1,9 +1,9 @@
 package com.example.android.autoVolume;
 
-class ChangeProgressEvent {
+class EventProgress {
     int decibel;
 
-    ChangeProgressEvent(int decibel) {
+    EventProgress(int decibel) {
         this.decibel = decibel;
     }
 }

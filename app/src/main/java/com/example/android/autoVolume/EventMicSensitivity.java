@@ -1,9 +1,9 @@
 package com.example.android.autoVolume;
 
-class ChangeMicSensitivityEvent {
+class EventMicSensitivity {
     int value;
 
-    ChangeMicSensitivityEvent(int micSensitivity) {
+    EventMicSensitivity(int micSensitivity) {
         this.value = micSensitivity;
     }
 }

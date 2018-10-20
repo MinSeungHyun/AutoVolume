@@ -17,7 +17,7 @@ import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 
 import org.greenrobot.eventbus.EventBus;
 
-public class RangePopupActivity extends Activity {
+public class ActivityRangePopup extends Activity {
     //views
     CrystalRangeSeekbar rangeSeekBar;
     TextView topTextView, leftText, rightText;
@@ -109,8 +109,8 @@ public class RangePopupActivity extends Activity {
                 rightText.setText(String.valueOf(maxValue));
 
                 //이벤트버스로 메인액티비티의 텍스트뷰 변경
-                EventBus.getDefault().post(new ChangeMinMaxTVEvent(true, keyName, minValue.intValue()));
-                EventBus.getDefault().post(new ChangeMinMaxTVEvent(false, keyName, maxValue.intValue()));
+                EventBus.getDefault().post(new EventMinMaxTV(true, keyName, minValue.intValue()));
+                EventBus.getDefault().post(new EventMinMaxTV(false, keyName, maxValue.intValue()));
             }
         });
     }
