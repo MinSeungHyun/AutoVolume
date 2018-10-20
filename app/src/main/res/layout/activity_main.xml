@@ -96,19 +96,30 @@
             android:gravity="center"
             android:text="@string/ringtone" />
 
-        <TextView
-            android:id="@+id/min_ringtone"
-            style="@style/minMaxText"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/range_linearLayout_1"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/min_volume" />
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/max_ringtone"
-            style="@style/minMaxText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/max_volume" />
+            <TextView
+                android:id="@+id/min_ringtone"
+                style="@style/minMaxText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/min_volume" />
+
+            <TextView
+                android:id="@+id/max_ringtone"
+                style="@style/minMaxText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/max_volume" />
+        </LinearLayout>
 
         <Switch
             android:id="@+id/switch_1"
@@ -152,19 +163,30 @@
             android:gravity="center"
             android:text="@string/media" />
 
-        <TextView
-            android:id="@+id/min_media"
-            style="@style/minMaxText"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/range_linearLayout_2"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/min_volume" />
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/max_media"
-            style="@style/minMaxText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/max_volume" />
+            <TextView
+                android:id="@+id/min_media"
+                style="@style/minMaxText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/min_volume" />
+
+            <TextView
+                android:id="@+id/max_media"
+                style="@style/minMaxText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/max_volume" />
+        </LinearLayout>
 
         <Switch
             android:id="@+id/switch_2"
@@ -207,19 +229,30 @@
             android:gravity="center"
             android:text="@string/notifications" />
 
-        <TextView
-            android:id="@+id/min_notifications"
-            style="@style/minMaxText"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/range_linearLayout_3"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/min_volume" />
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/max_notifications"
-            style="@style/minMaxText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/max_volume" />
+            <TextView
+                android:id="@+id/min_notifications"
+                style="@style/minMaxText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/min_volume" />
+
+            <TextView
+                android:id="@+id/max_notifications"
+                style="@style/minMaxText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/max_volume" />
+        </LinearLayout>
 
         <Switch
             android:id="@+id/switch_3"
@@ -262,19 +295,30 @@
             android:gravity="center"
             android:text="@string/alarm" />
 
-        <TextView
-            android:id="@+id/min_alarm"
-            style="@style/minMaxText"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/range_linearLayout_4"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/min_volume" />
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/max_alarm"
-            style="@style/minMaxText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/max_volume" />
+            <TextView
+                android:id="@+id/min_alarm"
+                style="@style/minMaxText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/min_volume" />
+
+            <TextView
+                android:id="@+id/max_alarm"
+                style="@style/minMaxText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/max_volume" />
+        </LinearLayout>
 
         <Switch
             android:id="@+id/switch_4"
