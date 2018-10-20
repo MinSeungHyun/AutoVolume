@@ -8,6 +8,7 @@
     <string name="current_noise">현재 소음</string>
     <string name="mic_sensitive">마이크 감도</string>
     <string name="mic_level">마이크 수준</string>
+    <string name="change"><u>변경</u></string>
     <string name="volume_interval">볼륨 조절 간격</string>
     <string name="low">낮음</string>
     <string name="high">높음</string>

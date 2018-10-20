@@ -8,6 +8,7 @@
     <string name="current_noise">Current noise</string>
     <string name="mic_sensitive">Mic sensitivity</string>
     <string name="mic_level">Mic level</string>
+    <string name="change"><u>change</u></string>
     <string name="volume_interval">Volume adjustment interval</string>
     <string name="low">low</string>
     <string name="high">high</string>

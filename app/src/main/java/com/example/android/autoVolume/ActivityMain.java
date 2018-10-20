@@ -405,6 +405,10 @@ public class ActivityMain extends AppCompatActivity {
         textView_2.setAlpha(1f);
         textView_3.setAlpha(1f);
         textView_4.setAlpha(1f);
+        linearLayout_1.setClickable(true);
+        linearLayout_2.setClickable(true);
+        linearLayout_3.setClickable(true);
+        linearLayout_4.setClickable(true);
         final TypedValue outValue = new TypedValue();
         getApplicationContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
         topLinearLayout.setBackgroundResource(outValue.resourceId);
@@ -423,6 +427,10 @@ public class ActivityMain extends AppCompatActivity {
         textView_2.setAlpha(0.5f);
         textView_3.setAlpha(0.5f);
         textView_4.setAlpha(0.5f);
+        linearLayout_1.setClickable(false);
+        linearLayout_2.setClickable(false);
+        linearLayout_3.setClickable(false);
+        linearLayout_4.setClickable(false);
         topLinearLayout.setBackground(null);
     }
 
