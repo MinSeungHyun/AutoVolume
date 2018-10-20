@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -290,6 +291,19 @@ public class ActivityMain extends AppCompatActivity {
                 String switchTag = String.valueOf(buttonView.getTag());
                 switchPreferenceEditor.putBoolean(switchTag, isChecked);
                 switchPreferenceEditor.apply();
+                if (isChecked) {
+                    switch (buttonView.getId()) {
+                        case R.id.switch_1:
+                            imageView_1.setImageResource(R.drawable.ic_baseline_ring_volume_colored_24px);
+                            textView_1.setTextColor(getColor(R.color.colorPrimary));
+                    }
+                } else {
+                    switch (buttonView.getId()) {
+                        case R.id.switch_1:
+                            imageView_1.setImageResource(R.drawable.ic_baseline_ring_volume_24px);
+                            textView_1.setTextColor(Color.parseColor("#000000"));
+                    }
+                }
             }
         };
 
@@ -298,33 +312,13 @@ public class ActivityMain extends AppCompatActivity {
         switch_3.setOnCheckedChangeListener(onCheckedChangeListener);
         switch_4.setOnCheckedChangeListener(onCheckedChangeListener);
 
-        //항목과 mainView 의 클릭을 받아 액티비티를 여는 리스너
-        LinearLayout.OnClickListener linearLayoutOnClickListener = new LinearLayout.OnClickListener() {
+        topLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 if (mainSwitch.isChecked()) {
-                    //체크 되있으면 원래대로 실행
-                    Intent intent = new Intent(ActivityMain.this, ActivityRangePopup.class);
-                    switch (view.getId()) {
-                        case R.id.top_linearLayout:
-                            intent = new Intent(ActivityMain.this, ActivityAutoVolume.class);
-                            break;
-                        case R.id.linearLayout_1:
-                            intent.putExtra("viewName", "view_1");
-                            break;
-                        case R.id.linearLayout_2:
-                            intent.putExtra("viewName", "view_2");
-                            break;
-                        case R.id.linearLayout_3:
-                            intent.putExtra("viewName", "view_3");
-                            break;
-                        case R.id.linearLayout_4:
-                            intent.putExtra("viewName", "view_4");
-                            break;
-                    }
+                    Intent intent = new Intent(ActivityMain.this, ActivityAutoVolume.class);
                     startActivity(intent);
                 } else {
-                    //안되있으면 스위치 강조
                     ValueAnimator animation = ValueAnimator.ofFloat(1f, 0f);
                     animation.setDuration(1000);
                     animation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -336,9 +330,31 @@ public class ActivityMain extends AppCompatActivity {
                     animation.start();
                 }
             }
+        });
+
+        //각 항목들의 클릭을 받아 액티비티를 여는 리스너
+        LinearLayout.OnClickListener linearLayoutOnClickListener = new LinearLayout.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ActivityMain.this, ActivityRangePopup.class);
+                switch (view.getId()) {
+                    case R.id.linearLayout_1:
+                        intent.putExtra("viewName", "view_1");
+                        break;
+                    case R.id.linearLayout_2:
+                        intent.putExtra("viewName", "view_2");
+                        break;
+                    case R.id.linearLayout_3:
+                        intent.putExtra("viewName", "view_3");
+                        break;
+                    case R.id.linearLayout_4:
+                        intent.putExtra("viewName", "view_4");
+                        break;
+                }
+                startActivity(intent);
+            }
         };
 
-        topLinearLayout.setOnClickListener(linearLayoutOnClickListener);
         linearLayout_1.setOnClickListener(linearLayoutOnClickListener);
         linearLayout_2.setOnClickListener(linearLayoutOnClickListener);
         linearLayout_3.setOnClickListener(linearLayoutOnClickListener);
@@ -363,10 +379,6 @@ public class ActivityMain extends AppCompatActivity {
      */
     public void setEnabled() {
         mainTextView.setAlpha(1f);
-        textView_1.setAlpha(1f);
-        textView_2.setAlpha(1f);
-        textView_3.setAlpha(1f);
-        textView_4.setAlpha(1f);
         switch_1.setEnabled(true);
         switch_2.setEnabled(true);
         switch_3.setEnabled(true);
@@ -374,15 +386,6 @@ public class ActivityMain extends AppCompatActivity {
         final TypedValue outValue = new TypedValue();
         getApplicationContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
         topLinearLayout.setBackgroundResource(outValue.resourceId);
-        linearLayout_1.setBackgroundResource(outValue.resourceId);
-        linearLayout_2.setBackgroundResource(outValue.resourceId);
-        linearLayout_3.setBackgroundResource(outValue.resourceId);
-        linearLayout_4.setBackgroundResource(outValue.resourceId);
-        imageView_1.setAlpha(1f);
-        imageView_2.setAlpha(1f);
-        imageView_3.setAlpha(1f);
-        imageView_4.setAlpha(1f);
-
     }
 
     /**
@@ -390,24 +393,11 @@ public class ActivityMain extends AppCompatActivity {
      */
     public void setDisabled() {
         mainTextView.setAlpha(0.8f);
-        textView_1.setAlpha(0.5f);
-        textView_2.setAlpha(0.5f);
-        textView_3.setAlpha(0.5f);
-        textView_4.setAlpha(0.5f);
         switch_1.setEnabled(false);
         switch_2.setEnabled(false);
         switch_3.setEnabled(false);
         switch_4.setEnabled(false);
         topLinearLayout.setBackground(null);
-        linearLayout_1.setBackground(null);
-        linearLayout_2.setBackground(null);
-        linearLayout_3.setBackground(null);
-        linearLayout_4.setBackground(null);
-        imageView_1.setAlpha(0.5f);
-        imageView_2.setAlpha(0.5f);
-        imageView_3.setAlpha(0.5f);
-        imageView_4.setAlpha(0.5f);
-
     }
 
     /**
