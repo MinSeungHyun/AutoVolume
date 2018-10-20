@@ -40,9 +40,10 @@ public class ActivityMain extends AppCompatActivity {
     //view
     TextView mainTextView, textView_1, textView_2, textView_3, textView_4,
             minRingtone, maxRingtone, minMedia, maxMedia, minNotifications, maxNotifications, minAlarm, maxAlarm;
-    Switch mainSwitch, switch_1, switch_2, switch_3, switch_4;
+    Switch mainSwitch;
     View highlightSwitch;
-    LinearLayout topLinearLayout, linearLayout_1, linearLayout_2, linearLayout_3, linearLayout_4;
+    LinearLayout topLinearLayout, linearLayout_1, linearLayout_2, linearLayout_3, linearLayout_4,
+            rangeLinearLayout_1, rangeLinearLayout_2, rangeLinearLayout_3, rangeLinearLayout_4;
     ImageView imageView_1, imageView_2, imageView_3, imageView_4;
     //sharedPreference
     SharedPreferences switchPreference, volumeRangePreference;
@@ -70,7 +71,6 @@ public class ActivityMain extends AppCompatActivity {
 
         reloadSwitchState();
         reloadTextState();
-        reloadIconTV();
 
         setListeners();
 
@@ -145,16 +145,16 @@ public class ActivityMain extends AppCompatActivity {
         maxAlarm = findViewById(R.id.max_alarm);
 
         mainSwitch = findViewById(R.id.main_switch);
-        switch_1 = findViewById(R.id.switch_1);
-        switch_2 = findViewById(R.id.switch_2);
-        switch_3 = findViewById(R.id.switch_3);
-        switch_4 = findViewById(R.id.switch_4);
 
         topLinearLayout = findViewById(R.id.top_linearLayout);
         linearLayout_1 = findViewById(R.id.linearLayout_1);
         linearLayout_2 = findViewById(R.id.linearLayout_2);
         linearLayout_3 = findViewById(R.id.linearLayout_3);
         linearLayout_4 = findViewById(R.id.linearLayout_4);
+        rangeLinearLayout_1 = findViewById(R.id.range_linearLayout_1);
+        rangeLinearLayout_2 = findViewById(R.id.range_linearLayout_2);
+        rangeLinearLayout_3 = findViewById(R.id.range_linearLayout_3);
+        rangeLinearLayout_4 = findViewById(R.id.range_linearLayout_4);
 
         imageView_1 = findViewById(R.id.ringtoneIcon);
         imageView_2 = findViewById(R.id.mediaIcon);
@@ -183,15 +183,17 @@ public class ActivityMain extends AppCompatActivity {
      */
     private void reloadSwitchState() {
         Boolean isChecked = switchPreference.getBoolean(String.valueOf(mainSwitch.getTag()), false);
-        Boolean isChecked1 = switchPreference.getBoolean(String.valueOf(switch_1.getTag()), false);
-        Boolean isChecked2 = switchPreference.getBoolean(String.valueOf(switch_2.getTag()), false);
-        Boolean isChecked3 = switchPreference.getBoolean(String.valueOf(switch_3.getTag()), false);
-        Boolean isChecked4 = switchPreference.getBoolean(String.valueOf(switch_4.getTag()), false);
+        Boolean isChecked_1 = switchPreference.getBoolean(KeySaved.ringtoneStateKey, false);
+        Boolean isChecked_2 = switchPreference.getBoolean(KeySaved.mediaStateKey, false);
+        Boolean isChecked_3 = switchPreference.getBoolean(KeySaved.notificationsStateKey, false);
+        Boolean isChecked_4 = switchPreference.getBoolean(KeySaved.alarmStateKey, false);
+
         mainSwitch.setChecked(isChecked);
-        switch_1.setChecked(isChecked1);
-        switch_2.setChecked(isChecked2);
-        switch_3.setChecked(isChecked3);
-        switch_4.setChecked(isChecked4);
+        setIconTV(imageView_1, textView_1, isChecked_1);
+        setIconTV(imageView_2, textView_2, isChecked_2);
+        setIconTV(imageView_3, textView_3, isChecked_3);
+        setIconTV(imageView_4, textView_4, isChecked_4);
+
     }
 
     /**
@@ -215,32 +217,6 @@ public class ActivityMain extends AppCompatActivity {
         maxNotifications.setText(String.format(getString(R.string.max_volume), sMaxNotifications));
         minAlarm.setText(String.format(getString(R.string.min_volume), sMinAlarm));
         maxAlarm.setText(String.format(getString(R.string.max_volume), sMaxAlarm));
-    }
-
-    /**
-     * 항목 스위치의 값에 따라 아이콘과 텍스트 상태 변경
-     */
-    private void reloadIconTV() {
-        if (switch_1.isChecked()) {
-            setIconTV(imageView_1, textView_1, true);
-        } else {
-            setIconTV(imageView_1, textView_1, false);
-        }
-        if (switch_2.isChecked()) {
-            setIconTV(imageView_2, textView_2, true);
-        } else {
-            setIconTV(imageView_2, textView_2, false);
-        }
-        if (switch_3.isChecked()) {
-            setIconTV(imageView_3, textView_3, true);
-        } else {
-            setIconTV(imageView_3, textView_3, false);
-        }
-        if (switch_4.isChecked()) {
-            setIconTV(imageView_4, textView_4, true);
-        } else {
-            setIconTV(imageView_4, textView_4, false);
-        }
     }
 
     /**
@@ -281,8 +257,8 @@ public class ActivityMain extends AppCompatActivity {
                         mainSwitch.setChecked(false);
                         switchPreferenceEditor.putBoolean(String.valueOf(mainSwitch.getTag()), false);
                         switchPreferenceEditor.commit();
-                    } else { //권한 허용됨
-                        //활성화
+                    } else {
+                        //권한 허용됨, 활성화
                         setEnableByMainSwitch();
                         //서비스 시작
                         Intent service = new Intent(ActivityMain.this, ServiceAutoVolume.class);
@@ -299,50 +275,6 @@ public class ActivityMain extends AppCompatActivity {
                 }
             }
         });
-
-        Switch.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                String switchTag = String.valueOf(buttonView.getTag());
-                switchPreferenceEditor.putBoolean(switchTag, isChecked);
-                switchPreferenceEditor.apply();
-                if (isChecked) {
-                    switch (buttonView.getId()) {
-                        case R.id.switch_1:
-                            setIconTV(imageView_1, textView_1, true);
-                            break;
-                        case R.id.switch_2:
-                            setIconTV(imageView_2, textView_2, true);
-                            break;
-                        case R.id.switch_3:
-                            setIconTV(imageView_3, textView_3, true);
-                            break;
-                        case R.id.switch_4:
-                            setIconTV(imageView_4, textView_4, true);
-                            break;
-                    }
-                } else {
-                    switch (buttonView.getId()) {
-                        case R.id.switch_1:
-                            setIconTV(imageView_1, textView_1, false);
-                            break;
-                        case R.id.switch_2:
-                            setIconTV(imageView_2, textView_2, false);
-                            break;
-                        case R.id.switch_3:
-                            setIconTV(imageView_3, textView_3, false);
-                            break;
-                        case R.id.switch_4:
-                            setIconTV(imageView_4, textView_4, false);
-                            break;
-                    }
-                }
-            }
-        };
-        switch_1.setOnCheckedChangeListener(onCheckedChangeListener);
-        switch_2.setOnCheckedChangeListener(onCheckedChangeListener);
-        switch_3.setOnCheckedChangeListener(onCheckedChangeListener);
-        switch_4.setOnCheckedChangeListener(onCheckedChangeListener);
 
         topLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -364,31 +296,87 @@ public class ActivityMain extends AppCompatActivity {
             }
         });
 
-        LinearLayout.OnClickListener linearLayoutOnClickListener = new LinearLayout.OnClickListener() {
+        LinearLayout.OnClickListener itemLinearLayoutClickListener = new LinearLayout.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.linearLayout_1:
+                        if (switchPreference.getBoolean(KeySaved.ringtoneStateKey, false)) {
+                            switchPreferenceEditor.putBoolean(KeySaved.ringtoneStateKey, false);
+                            switchPreferenceEditor.apply();
+                            setIconTV(imageView_1, textView_1, false);
+                        } else {
+                            switchPreferenceEditor.putBoolean(KeySaved.ringtoneStateKey, true);
+                            switchPreferenceEditor.apply();
+                            setIconTV(imageView_1, textView_1, true);
+                        }
+                        break;
+                    case R.id.linearLayout_2:
+                        if (switchPreference.getBoolean(KeySaved.mediaStateKey, false)) {
+                            switchPreferenceEditor.putBoolean(KeySaved.mediaStateKey, false);
+                            switchPreferenceEditor.apply();
+                            setIconTV(imageView_2, textView_2, false);
+                        } else {
+                            switchPreferenceEditor.putBoolean(KeySaved.mediaStateKey, true);
+                            switchPreferenceEditor.apply();
+                            setIconTV(imageView_2, textView_2, true);
+                        }
+                        break;
+                    case R.id.linearLayout_3:
+                        if (switchPreference.getBoolean(KeySaved.notificationsStateKey, false)) {
+                            switchPreferenceEditor.putBoolean(KeySaved.notificationsStateKey, false);
+                            switchPreferenceEditor.apply();
+                            setIconTV(imageView_3, textView_3, false);
+                        } else {
+                            switchPreferenceEditor.putBoolean(KeySaved.notificationsStateKey, true);
+                            switchPreferenceEditor.apply();
+                            setIconTV(imageView_3, textView_3, true);
+                        }
+                        break;
+                    case R.id.linearLayout_4:
+                        if (switchPreference.getBoolean(KeySaved.alarmStateKey, false)) {
+                            switchPreferenceEditor.putBoolean(KeySaved.alarmStateKey, false);
+                            switchPreferenceEditor.apply();
+                            setIconTV(imageView_4, textView_4, false);
+                        } else {
+                            switchPreferenceEditor.putBoolean(KeySaved.alarmStateKey, true);
+                            switchPreferenceEditor.apply();
+                            setIconTV(imageView_4, textView_4, true);
+                        }
+                        break;
+                }
+            }
+        };
+        linearLayout_1.setOnClickListener(itemLinearLayoutClickListener);
+        linearLayout_2.setOnClickListener(itemLinearLayoutClickListener);
+        linearLayout_3.setOnClickListener(itemLinearLayoutClickListener);
+        linearLayout_4.setOnClickListener(itemLinearLayoutClickListener);
+
+        LinearLayout.OnClickListener rangeLinearLayoutClickListener = new LinearLayout.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ActivityMain.this, ActivityRangePopup.class);
                 switch (view.getId()) {
-                    case R.id.linearLayout_1:
+                    case R.id.range_linearLayout_1:
                         intent.putExtra("viewName", "view_1");
                         break;
-                    case R.id.linearLayout_2:
+                    case R.id.range_linearLayout_2:
                         intent.putExtra("viewName", "view_2");
                         break;
-                    case R.id.linearLayout_3:
+                    case R.id.range_linearLayout_3:
                         intent.putExtra("viewName", "view_3");
                         break;
-                    case R.id.linearLayout_4:
+                    case R.id.range_linearLayout_4:
                         intent.putExtra("viewName", "view_4");
                         break;
                 }
                 startActivity(intent);
             }
         };
-        linearLayout_1.setOnClickListener(linearLayoutOnClickListener);
-        linearLayout_2.setOnClickListener(linearLayoutOnClickListener);
-        linearLayout_3.setOnClickListener(linearLayoutOnClickListener);
-        linearLayout_4.setOnClickListener(linearLayoutOnClickListener);
+        rangeLinearLayout_1.setOnClickListener(rangeLinearLayoutClickListener);
+        rangeLinearLayout_2.setOnClickListener(rangeLinearLayoutClickListener);
+        rangeLinearLayout_3.setOnClickListener(rangeLinearLayoutClickListener);
+        rangeLinearLayout_4.setOnClickListener(rangeLinearLayoutClickListener);
     }
 
     /**
@@ -409,10 +397,6 @@ public class ActivityMain extends AppCompatActivity {
      */
     public void setEnableByMainSwitch() {
         mainTextView.setAlpha(1f);
-        switch_1.setEnabled(true);
-        switch_2.setEnabled(true);
-        switch_3.setEnabled(true);
-        switch_4.setEnabled(true);
         imageView_1.setAlpha(1f);
         imageView_2.setAlpha(1f);
         imageView_3.setAlpha(1f);
@@ -431,10 +415,6 @@ public class ActivityMain extends AppCompatActivity {
      */
     public void setDisableByMainSwitch() {
         mainTextView.setAlpha(0.8f);
-        switch_1.setEnabled(false);
-        switch_2.setEnabled(false);
-        switch_3.setEnabled(false);
-        switch_4.setEnabled(false);
         imageView_1.setAlpha(0.5f);
         imageView_2.setAlpha(0.5f);
         imageView_3.setAlpha(0.5f);

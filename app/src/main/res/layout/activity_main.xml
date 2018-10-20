@@ -66,9 +66,6 @@
         android:id="@+id/linearLayout_1"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:padding="16dp"
@@ -121,22 +118,12 @@
                 android:text="@string/max_volume" />
         </LinearLayout>
 
-        <Switch
-            android:id="@+id/switch_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:tag="switch_1" />
-
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout_2"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:padding="16dp"
@@ -188,21 +175,12 @@
                 android:text="@string/max_volume" />
         </LinearLayout>
 
-        <Switch
-            android:id="@+id/switch_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:tag="switch_2" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout_3"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:padding="16dp"
@@ -254,21 +232,12 @@
                 android:text="@string/max_volume" />
         </LinearLayout>
 
-        <Switch
-            android:id="@+id/switch_3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:tag="switch_3" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout_4"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:padding="16dp"
@@ -320,12 +289,6 @@
                 android:text="@string/max_volume" />
         </LinearLayout>
 
-        <Switch
-            android:id="@+id/switch_4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:tag="switch_4" />
     </LinearLayout>
 
     <View

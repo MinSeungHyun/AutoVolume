@@ -14,6 +14,10 @@ class KeySaved {
 
     //MainActivity
     static final String switchPreferenceKey = "switch_state";
+    static final String ringtoneStateKey = "ringtone_state";
+    static final String mediaStateKey = "media_state";
+    static final String notificationsStateKey = "notifications_state";
+    static final String alarmStateKey = "alarm_state";
 
     //ActivityAutoVolume
     static final String autoVolumePreferenceKey = "auto_volume";
