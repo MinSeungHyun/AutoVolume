@@ -82,7 +82,7 @@
             android:id="@+id/ringtoneIcon"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="3"
             android:contentDescription="ringtone icon"
             app:srcCompat="@drawable/ic_baseline_ring_volume_24px"
             tools:ignore="HardcodedText" />
@@ -90,8 +90,10 @@
         <TextView
             android:id="@+id/textView_1"
             style="@style/categoryText"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
             android:text="@string/ringtone" />
 
         <TextView
@@ -114,6 +116,7 @@
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:tag="switch_1" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -135,7 +138,7 @@
             android:id="@+id/mediaIcon"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="3"
             android:contentDescription="media icon"
             app:srcCompat="@drawable/ic_baseline_music_note_24px"
             tools:ignore="HardcodedText" />
@@ -143,8 +146,10 @@
         <TextView
             android:id="@+id/textView_2"
             style="@style/categoryText"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
             android:text="@string/media" />
 
         <TextView
@@ -188,7 +193,7 @@
             android:id="@+id/notificationsIcon"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="3"
             android:contentDescription="notifications icon"
             app:srcCompat="@drawable/ic_baseline_feedback_24px"
             tools:ignore="HardcodedText" />
@@ -196,8 +201,10 @@
         <TextView
             android:id="@+id/textView_3"
             style="@style/categoryText"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
             android:text="@string/notifications" />
 
         <TextView
@@ -241,7 +248,7 @@
             android:id="@+id/alarmIcon"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="3"
             android:contentDescription="alarm icon"
             app:srcCompat="@drawable/ic_baseline_alarm_24px"
             tools:ignore="HardcodedText" />
@@ -249,8 +256,10 @@
         <TextView
             android:id="@+id/textView_4"
             style="@style/categoryText"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
             android:text="@string/alarm" />
 
         <TextView
