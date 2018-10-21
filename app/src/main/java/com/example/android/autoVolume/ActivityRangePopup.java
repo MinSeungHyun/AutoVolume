@@ -27,6 +27,7 @@ public class ActivityRangePopup extends Activity {
     //audioManager
     AudioManager audioManager;
     //오디오 타입 식별을 위한 변수들
+    String viewName;
     int audioType;
     String audioName;
     String minKeyName;
@@ -58,37 +59,37 @@ public class ActivityRangePopup extends Activity {
 
         //클릭된 뷰를 받아와서 각종 변수 설정
         Intent intent = getIntent();
-        String viewName = intent.getStringExtra("viewName");
+        viewName = intent.getStringExtra(SaveKey.viewName);
 
         switch (viewName) {
-            case "view_1":
+            case SaveKey.ringtone:
                 audioType = AudioManager.STREAM_RING;
                 audioName = getString(R.string.ringtone);
-                minKeyName = KeySaved.ringtoneMinKey;
-                maxKeyName = KeySaved.ringtoneMaxKey;
+                minKeyName = SaveKey.ringtoneMinKey;
+                maxKeyName = SaveKey.ringtoneMaxKey;
                 break;
-            case "view_2":
+            case SaveKey.media:
                 audioType = AudioManager.STREAM_MUSIC;
                 audioName = getString(R.string.media);
-                minKeyName = KeySaved.mediaMinKey;
-                maxKeyName = KeySaved.mediaMaxKey;
+                minKeyName = SaveKey.mediaMinKey;
+                maxKeyName = SaveKey.mediaMaxKey;
                 break;
-            case "view_3":
+            case SaveKey.notifications:
                 audioType = AudioManager.STREAM_NOTIFICATION;
                 audioName = getString(R.string.notifications);
-                minKeyName = KeySaved.notificationsMinKey;
-                maxKeyName = KeySaved.notificationsMaxKey;
+                minKeyName = SaveKey.notificationsMinKey;
+                maxKeyName = SaveKey.notificationsMaxKey;
                 break;
-            case "view_4":
+            case SaveKey.alarm:
                 audioType = AudioManager.STREAM_ALARM;
                 audioName = getString(R.string.alarm);
-                minKeyName = KeySaved.alarmMinKey;
-                maxKeyName = KeySaved.alarmMaxKey;
+                minKeyName = SaveKey.alarmMinKey;
+                maxKeyName = SaveKey.alarmMaxKey;
                 break;
         }
 
         //sharedPreferences 설정
-        sharedPreferences = getSharedPreferences(KeySaved.rangePreferenceKey, 0);
+        sharedPreferences = getSharedPreferences(SaveKey.rangePreferenceKey, 0);
         editor = sharedPreferences.edit();
 
         //저장된 값 설정, 초기 설정
@@ -113,9 +114,8 @@ public class ActivityRangePopup extends Activity {
                 leftText.setText(String.valueOf(minValue));
                 rightText.setText(String.valueOf(maxValue));
 
-                //이벤트버스로 메인액티비티의 텍스트뷰 변경
-                EventBus.getDefault().post(new EventMinMaxTV(minKeyName, minValue.intValue()));
-                EventBus.getDefault().post(new EventMinMaxTV(maxKeyName, maxValue.intValue()));
+                //이벤트버스로 변경된값 전달 to ActivityMain, ServiceAutoVolume
+                EventBus.getDefault().post(new EventMinMaxValue(viewName, minValue.intValue(), maxValue.intValue()));
             }
         });
     }

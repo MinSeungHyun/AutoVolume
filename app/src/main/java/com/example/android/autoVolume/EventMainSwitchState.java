@@ -1,9 +1,9 @@
 package com.example.android.autoVolume;
 
-class EventSwitchState {
+class EventMainSwitchState {
     boolean isChecked;
 
-    EventSwitchState(boolean isChecked) {
+    EventMainSwitchState(boolean isChecked) {
         this.isChecked = isChecked;
     }
 }

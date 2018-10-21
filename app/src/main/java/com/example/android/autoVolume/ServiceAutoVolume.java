@@ -19,12 +19,13 @@ import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Objects;
 
 public class ServiceAutoVolume extends Service {
     private static final double EMA_FILTER = 0.6;
-    private static final double ampl = 10 * Math.exp(-2);
+    private static final double amp = 10 * Math.exp(-2);
     private MediaRecorder mediaRecorder;
     private AudioManager audioManager;
     private Notification.Builder builder;
@@ -33,6 +34,7 @@ public class ServiceAutoVolume extends Service {
 
     private int micLevel;
     private int micSensitivity;
+    private int ringtoneMin, ringtoneMax, mediaMin, mediaMax, notificationsMin, notificationsMax, alarmMin, alarmMax;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -51,9 +53,20 @@ public class ServiceAutoVolume extends Service {
         startForeground(1, builder.build());
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        SharedPreferences sharedPreferences = getSharedPreferences(KeySaved.autoVolumePreferenceKey, MODE_PRIVATE);
-        micLevel = sharedPreferences.getInt(KeySaved.micLevelKey, 100);
-        micSensitivity = sharedPreferences.getInt(KeySaved.micSensitivityKey, 50);
+
+        //초기값 설정
+        SharedPreferences autoVolumePreferences = getSharedPreferences(SaveKey.autoVolumePreferenceKey, MODE_PRIVATE);
+        micLevel = autoVolumePreferences.getInt(SaveKey.micLevelKey, 100);
+        micSensitivity = autoVolumePreferences.getInt(SaveKey.micSensitivityKey, 50);
+        SharedPreferences rangePreference = getSharedPreferences(SaveKey.rangePreferenceKey, MODE_PRIVATE);
+        ringtoneMin = rangePreference.getInt(SaveKey.ringtoneMinKey, 0);
+        ringtoneMax = rangePreference.getInt(SaveKey.ringtoneMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
+        mediaMin = rangePreference.getInt(SaveKey.mediaMinKey, 0);
+        mediaMax = rangePreference.getInt(SaveKey.mediaMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+        notificationsMin = rangePreference.getInt(SaveKey.notificationsMinKey, 0);
+        notificationsMax = rangePreference.getInt(SaveKey.notificationsMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION));
+        alarmMin = rangePreference.getInt(SaveKey.alarmMinKey, 0);
+        alarmMax = rangePreference.getInt(SaveKey.alarmMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
 
         isToastShowing = false;
         isServiceRunning = true;
@@ -78,11 +91,36 @@ public class ServiceAutoVolume extends Service {
     }
 
     /**
-     * EventSwitchState 를 받음
+     * EventMainSwitchState 를 받음
      */
     @Subscribe
-    public void changeSwitchStateEvent(EventSwitchState event) {
+    public void changeSwitchStateEvent(EventMainSwitchState event) {
         isServiceRunning = event.isChecked;
+    }
+
+    /**
+     * EventMinMaxValue 를 받아서 볼륨 범위를 변경
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void changeMinMax(EventMinMaxValue event) {
+        switch (event.keyName) {
+            case SaveKey.ringtone:
+                ringtoneMin = event.minValue;
+                ringtoneMax = event.maxValue;
+                break;
+            case SaveKey.media:
+                mediaMin = event.minValue;
+                mediaMax = event.maxValue;
+                break;
+            case SaveKey.notifications:
+                notificationsMin = event.minValue;
+                notificationsMax = event.maxValue;
+                break;
+            case SaveKey.alarm:
+                alarmMin = event.minValue;
+                alarmMax = event.maxValue;
+                break;
+        }
     }
 
     /**
@@ -145,7 +183,7 @@ public class ServiceAutoVolume extends Service {
             int amplitude = mediaRecorder.getMaxAmplitude();
             double mEMA = 0.0;
 
-            decibel = (int) (long) Math.round(20 * Math.log10(EMA_FILTER * amplitude + (1.0 - EMA_FILTER) * mEMA / ampl));
+            decibel = (int) (long) Math.round(20 * Math.log10(EMA_FILTER * amplitude + (1.0 - EMA_FILTER) * mEMA / amp));
 
             return decibel;
         } else {
@@ -156,13 +194,19 @@ public class ServiceAutoVolume extends Service {
     /**
      * 데시벨에따라 볼륨 변경
      */
-    private void setVolume(int decibel) {
-        int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
+    private void setVolume(int value) {
+        //마이크 감도에따라 값 조절
         int progressMax = 130 - micSensitivity;
-        float ratio = (float) decibel / progressMax * maxVolume;
-        int volume = Math.round(ratio);
-        if (volume < 1) volume = 1; //볼륨이 진동모드로 바뀌는 것을 방지
+        float ratio = (float) value / progressMax;
+        //볼륨 범위에 따라 값 조절
+        int minVolume = ringtoneMin;
+        int maxVolume = ringtoneMax;
+        int range = maxVolume - minVolume;
+        int volume = Math.round(range * ratio) + minVolume;
+        if (volume > maxVolume) volume = maxVolume;
+        if (volume < minVolume) volume = minVolume;
 
+        if (volume < 1) volume = 1; //볼륨이 진동모드로 바뀌는 것을 방지
         //오류 발생을 줄이기 위해 한번더 확인
         if (audioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
             audioManager.setStreamVolume(AudioManager.STREAM_RING, volume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
@@ -219,9 +263,11 @@ public class ServiceAutoVolume extends Service {
                     }
                 } else {
                     isToastShowing = false;
-                    //데시벨 구하기
-                    int decibel = getDecibel() + (micLevel - 100);
-                    if (ActivityAutoVolume.isRunning) {
+
+                    int decibel = getDecibel(); //데시벨 구하기
+                    decibel += (micLevel - 100); //마이크 수준에따라 값 조절
+
+                    if (ActivityAutoVolume.isRunning) { //AutoVolume 액티비티가 실행중이면 progressBar 값 전달
                         EventBus.getDefault().post(new EventProgress(decibel));
                     }
                     setVolume(decibel);

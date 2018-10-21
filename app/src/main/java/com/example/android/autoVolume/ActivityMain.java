@@ -94,34 +94,26 @@ public class ActivityMain extends AppCompatActivity {
     }
 
     /**
-     * EventMinMaxTV 를 받아서 볼륨 범위 텍스트를 변경한다
+     * EventMinMaxValue 를 받아서 볼륨 범위 텍스트를 변경한다
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void changeTV(EventMinMaxTV event) {
+    public void changeTV(EventMinMaxValue event) {
         switch (event.keyName) {
-            case KeySaved.ringtoneMinKey:
-                minRingtone.setText(String.format(getString(R.string.min_volume), event.value));
+            case SaveKey.ringtone:
+                minRingtone.setText(String.format(getString(R.string.min_volume), event.minValue));
+                maxRingtone.setText(String.format(getString(R.string.max_volume), event.maxValue));
                 break;
-            case KeySaved.mediaMinKey:
-                minMedia.setText(String.format(getString(R.string.min_volume), event.value));
+            case SaveKey.media:
+                minMedia.setText(String.format(getString(R.string.min_volume), event.minValue));
+                maxMedia.setText(String.format(getString(R.string.max_volume), event.maxValue));
                 break;
-            case KeySaved.notificationsMinKey:
-                minNotifications.setText(String.format(getString(R.string.min_volume), event.value));
+            case SaveKey.notifications:
+                minNotifications.setText(String.format(getString(R.string.min_volume), event.minValue));
+                maxNotifications.setText(String.format(getString(R.string.max_volume), event.maxValue));
                 break;
-            case KeySaved.alarmMinKey:
-                minAlarm.setText(String.format(getString(R.string.min_volume), event.value));
-                break;
-            case KeySaved.ringtoneMaxKey:
-                maxRingtone.setText(String.format(getString(R.string.max_volume), event.value));
-                break;
-            case KeySaved.mediaMaxKey:
-                maxMedia.setText(String.format(getString(R.string.max_volume), event.value));
-                break;
-            case KeySaved.notificationsMaxKey:
-                maxNotifications.setText(String.format(getString(R.string.max_volume), event.value));
-                break;
-            case KeySaved.alarmMaxKey:
-                maxAlarm.setText(String.format(getString(R.string.max_volume), event.value));
+            case SaveKey.alarm:
+                minAlarm.setText(String.format(getString(R.string.min_volume), event.minValue));
+                maxAlarm.setText(String.format(getString(R.string.max_volume), event.maxValue));
                 break;
         }
     }
@@ -170,8 +162,8 @@ public class ActivityMain extends AppCompatActivity {
     @SuppressLint("CommitPrefEdits")
     private void getReferences() {
         //switchPreference 참조 생성
-        switchPreference = getSharedPreferences(KeySaved.switchPreferenceKey, MODE_PRIVATE);
-        volumeRangePreference = getSharedPreferences(KeySaved.rangePreferenceKey, MODE_PRIVATE);
+        switchPreference = getSharedPreferences(SaveKey.switchPreferenceKey, MODE_PRIVATE);
+        volumeRangePreference = getSharedPreferences(SaveKey.rangePreferenceKey, MODE_PRIVATE);
         switchPreferenceEditor = switchPreference.edit();
 
         //audioManager
@@ -183,10 +175,10 @@ public class ActivityMain extends AppCompatActivity {
      */
     private void reloadSwitchState() {
         Boolean isChecked = switchPreference.getBoolean(String.valueOf(mainSwitch.getTag()), false);
-        Boolean isChecked_1 = switchPreference.getBoolean(KeySaved.ringtoneStateKey, false);
-        Boolean isChecked_2 = switchPreference.getBoolean(KeySaved.mediaStateKey, false);
-        Boolean isChecked_3 = switchPreference.getBoolean(KeySaved.notificationsStateKey, false);
-        Boolean isChecked_4 = switchPreference.getBoolean(KeySaved.alarmStateKey, false);
+        Boolean isChecked_1 = switchPreference.getBoolean(SaveKey.ringtoneStateKey, false);
+        Boolean isChecked_2 = switchPreference.getBoolean(SaveKey.mediaStateKey, false);
+        Boolean isChecked_3 = switchPreference.getBoolean(SaveKey.notificationsStateKey, false);
+        Boolean isChecked_4 = switchPreference.getBoolean(SaveKey.alarmStateKey, false);
 
         mainSwitch.setChecked(isChecked);
         setIconTV(imageView_1, textView_1, isChecked_1);
@@ -200,14 +192,14 @@ public class ActivityMain extends AppCompatActivity {
      * 저장되었던 최소/최대 볼륨을 가져오는 메소드
      */
     private void reloadTextState() {
-        int sMinRingtone = volumeRangePreference.getInt(KeySaved.ringtoneMinKey, 0);
-        int sMaxRingtone = volumeRangePreference.getInt(KeySaved.ringtoneMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
-        int sMinMedia = volumeRangePreference.getInt(KeySaved.mediaMinKey, 0);
-        int sMaxMedia = volumeRangePreference.getInt(KeySaved.mediaMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
-        int sMinNotifications = volumeRangePreference.getInt(KeySaved.notificationsMinKey, 0);
-        int sMaxNotifications = volumeRangePreference.getInt(KeySaved.notificationsMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION));
-        int sMinAlarm = volumeRangePreference.getInt(KeySaved.alarmMinKey, 0);
-        int sMaxAlarm = volumeRangePreference.getInt(KeySaved.alarmMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
+        int sMinRingtone = volumeRangePreference.getInt(SaveKey.ringtoneMinKey, 0);
+        int sMaxRingtone = volumeRangePreference.getInt(SaveKey.ringtoneMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
+        int sMinMedia = volumeRangePreference.getInt(SaveKey.mediaMinKey, 0);
+        int sMaxMedia = volumeRangePreference.getInt(SaveKey.mediaMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+        int sMinNotifications = volumeRangePreference.getInt(SaveKey.notificationsMinKey, 0);
+        int sMaxNotifications = volumeRangePreference.getInt(SaveKey.notificationsMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION));
+        int sMinAlarm = volumeRangePreference.getInt(SaveKey.alarmMinKey, 0);
+        int sMaxAlarm = volumeRangePreference.getInt(SaveKey.alarmMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
 
         minRingtone.setText(String.format(getString(R.string.min_volume), sMinRingtone));
         maxRingtone.setText(String.format(getString(R.string.max_volume), sMaxRingtone));
@@ -263,13 +255,13 @@ public class ActivityMain extends AppCompatActivity {
                         //서비스 시작
                         Intent service = new Intent(ActivityMain.this, ServiceAutoVolume.class);
                         startService(service);
-                        EventBus.getDefault().post(new EventSwitchState(true));
+                        EventBus.getDefault().post(new EventMainSwitchState(true));
                     }
                 } else {
                     //비활성화
                     setDisableByMainSwitch();
                     //서비스 종료
-                    EventBus.getDefault().post(new EventSwitchState(false));
+                    EventBus.getDefault().post(new EventMainSwitchState(false));
                     Intent service = new Intent(ActivityMain.this, ServiceAutoVolume.class);
                     stopService(service);
                 }
@@ -303,45 +295,45 @@ public class ActivityMain extends AppCompatActivity {
                 if (mainSwitch.isChecked()) {
                     switch (view.getId()) {
                         case R.id.linearLayout_1:
-                            if (switchPreference.getBoolean(KeySaved.ringtoneStateKey, false)) {
-                                switchPreferenceEditor.putBoolean(KeySaved.ringtoneStateKey, false);
+                            if (switchPreference.getBoolean(SaveKey.ringtoneStateKey, false)) {
+                                switchPreferenceEditor.putBoolean(SaveKey.ringtoneStateKey, false);
                                 switchPreferenceEditor.apply();
                                 setIconTV(imageView_1, textView_1, false);
                             } else {
-                                switchPreferenceEditor.putBoolean(KeySaved.ringtoneStateKey, true);
+                                switchPreferenceEditor.putBoolean(SaveKey.ringtoneStateKey, true);
                                 switchPreferenceEditor.apply();
                                 setIconTV(imageView_1, textView_1, true);
                             }
                             break;
                         case R.id.linearLayout_2:
-                            if (switchPreference.getBoolean(KeySaved.mediaStateKey, false)) {
-                                switchPreferenceEditor.putBoolean(KeySaved.mediaStateKey, false);
+                            if (switchPreference.getBoolean(SaveKey.mediaStateKey, false)) {
+                                switchPreferenceEditor.putBoolean(SaveKey.mediaStateKey, false);
                                 switchPreferenceEditor.apply();
                                 setIconTV(imageView_2, textView_2, false);
                             } else {
-                                switchPreferenceEditor.putBoolean(KeySaved.mediaStateKey, true);
+                                switchPreferenceEditor.putBoolean(SaveKey.mediaStateKey, true);
                                 switchPreferenceEditor.apply();
                                 setIconTV(imageView_2, textView_2, true);
                             }
                             break;
                         case R.id.linearLayout_3:
-                            if (switchPreference.getBoolean(KeySaved.notificationsStateKey, false)) {
-                                switchPreferenceEditor.putBoolean(KeySaved.notificationsStateKey, false);
+                            if (switchPreference.getBoolean(SaveKey.notificationsStateKey, false)) {
+                                switchPreferenceEditor.putBoolean(SaveKey.notificationsStateKey, false);
                                 switchPreferenceEditor.apply();
                                 setIconTV(imageView_3, textView_3, false);
                             } else {
-                                switchPreferenceEditor.putBoolean(KeySaved.notificationsStateKey, true);
+                                switchPreferenceEditor.putBoolean(SaveKey.notificationsStateKey, true);
                                 switchPreferenceEditor.apply();
                                 setIconTV(imageView_3, textView_3, true);
                             }
                             break;
                         case R.id.linearLayout_4:
-                            if (switchPreference.getBoolean(KeySaved.alarmStateKey, false)) {
-                                switchPreferenceEditor.putBoolean(KeySaved.alarmStateKey, false);
+                            if (switchPreference.getBoolean(SaveKey.alarmStateKey, false)) {
+                                switchPreferenceEditor.putBoolean(SaveKey.alarmStateKey, false);
                                 switchPreferenceEditor.apply();
                                 setIconTV(imageView_4, textView_4, false);
                             } else {
-                                switchPreferenceEditor.putBoolean(KeySaved.alarmStateKey, true);
+                                switchPreferenceEditor.putBoolean(SaveKey.alarmStateKey, true);
                                 switchPreferenceEditor.apply();
                                 setIconTV(imageView_4, textView_4, true);
                             }
@@ -372,16 +364,16 @@ public class ActivityMain extends AppCompatActivity {
                 Intent intent = new Intent(ActivityMain.this, ActivityRangePopup.class);
                 switch (view.getId()) {
                     case R.id.range_linearLayout_1:
-                        intent.putExtra("viewName", "view_1");
+                        intent.putExtra(SaveKey.viewName, SaveKey.ringtone);
                         break;
                     case R.id.range_linearLayout_2:
-                        intent.putExtra("viewName", "view_2");
+                        intent.putExtra(SaveKey.viewName, SaveKey.media);
                         break;
                     case R.id.range_linearLayout_3:
-                        intent.putExtra("viewName", "view_3");
+                        intent.putExtra(SaveKey.viewName, SaveKey.notifications);
                         break;
                     case R.id.range_linearLayout_4:
-                        intent.putExtra("viewName", "view_4");
+                        intent.putExtra(SaveKey.viewName, SaveKey.alarm);
                         break;
                 }
                 startActivity(intent);
