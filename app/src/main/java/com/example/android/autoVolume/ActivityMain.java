@@ -339,6 +339,11 @@ public class ActivityMain extends AppCompatActivity {
                             }
                             break;
                     }
+                    EventBus.getDefault().post(new EventIsOn(
+                            switchPreference.getBoolean(SaveKey.ringtoneStateKey, false),
+                            switchPreference.getBoolean(SaveKey.mediaStateKey, false),
+                            switchPreference.getBoolean(SaveKey.notificationsStateKey, false),
+                            switchPreference.getBoolean(SaveKey.alarmStateKey, false))); //To ServiceAutoVolume
                 } else {
                     //강조
                     ValueAnimator animation = ValueAnimator.ofFloat(1f, 0f);

@@ -35,6 +35,7 @@ public class ServiceAutoVolume extends Service {
     private int micSensitivity;
     private int changeInterval;
     private int ringtoneMin, ringtoneMax, mediaMin, mediaMax, notificationsMin, notificationsMax, alarmMin, alarmMax;
+    private boolean isRingtoneOn, isMediaOn, isNotificationsOn, isAlarmOn;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -69,6 +70,11 @@ public class ServiceAutoVolume extends Service {
         notificationsMax = rangePreference.getInt(SaveKey.notificationsMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION));
         alarmMin = rangePreference.getInt(SaveKey.alarmMinKey, 0);
         alarmMax = rangePreference.getInt(SaveKey.alarmMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
+        SharedPreferences isOnPreference = getSharedPreferences(SaveKey.switchPreferenceKey, MODE_PRIVATE);
+        isRingtoneOn = isOnPreference.getBoolean(SaveKey.ringtoneStateKey, false);
+        isMediaOn = isOnPreference.getBoolean(SaveKey.mediaStateKey, false);
+        isNotificationsOn = isOnPreference.getBoolean(SaveKey.notificationsStateKey, false);
+        isAlarmOn = isOnPreference.getBoolean(SaveKey.alarmStateKey, false);
 
         isToastShowing = false;
         isServiceRunning = true;
@@ -106,6 +112,17 @@ public class ServiceAutoVolume extends Service {
     @Subscribe
     public void changeSwitchState(EventMainSwitchState event) {
         isServiceRunning = event.isChecked;
+    }
+
+    /**
+     * EventIsOn 를 받음 from ActivityMain
+     */
+    @Subscribe
+    public void changeIsOnState(EventIsOn event) {
+        isRingtoneOn = event.ringtone;
+        isMediaOn = event.media;
+        isNotificationsOn = event.notifications;
+        isAlarmOn = event.alarm;
     }
 
     /**
