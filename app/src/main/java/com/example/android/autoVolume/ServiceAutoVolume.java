@@ -26,12 +26,13 @@ import java.util.Objects;
 public class ServiceAutoVolume extends Service {
     private static final double EMA_FILTER = 0.6;
     private static final double amp = 10 * Math.exp(-2);
+    int second = 0;
+    int sum = 0;
     private MediaRecorder mediaRecorder;
     private AudioManager audioManager;
     private Notification.Builder builder;
     private Boolean isToastShowing;
     private Boolean isServiceRunning;
-
     private int micLevel;
     private int micSensitivity;
     private int changeInterval;
@@ -60,6 +61,7 @@ public class ServiceAutoVolume extends Service {
         micLevel = autoVolumePreferences.getInt(SaveKey.micLevelKey, 100);
         micSensitivity = autoVolumePreferences.getInt(SaveKey.micSensitivityKey, 50);
         changeInterval = autoVolumePreferences.getInt(SaveKey.intervalKey, 6) * 5;
+        if (changeInterval < 10) changeInterval = 10;
         SharedPreferences rangePreference = getSharedPreferences(SaveKey.rangePreferenceKey, MODE_PRIVATE);
         ringtoneMin = rangePreference.getInt(SaveKey.ringtoneMinKey, 0);
         ringtoneMax = rangePreference.getInt(SaveKey.ringtoneMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
@@ -281,18 +283,26 @@ public class ServiceAutoVolume extends Service {
                 } else {
                     isToastShowing = false;
 
-                    Log.d("[ServiceNotice]", "interval: " + changeInterval);
                     int decibel = getDecibel(); //데시벨 구하기
                     decibel += (micLevel - 100); //마이크 수준에따라 값 조절
 
                     if (ActivityAutoVolume.isRunning) { //AutoVolume 액티비티가 실행중이면 progressBar 값 전달
                         EventBus.getDefault().post(new EventProgress(decibel));
                     }
-                    setVolume(getVolume(decibel));
+
+                    if (second < changeInterval) {
+                        sum += getVolume(decibel);
+                        second++;
+                    } else {
+                        int volume = sum / second;
+                        setVolume(volume);
+                        second = 0;
+                        sum = 0;
+                    }
 
                     //딜레이
                     try {
-                        sleep(500);
+                        sleep(1000);
                     } catch (InterruptedException e) {
                         Log.e("[Error]", "InterruptedException");
                     }
