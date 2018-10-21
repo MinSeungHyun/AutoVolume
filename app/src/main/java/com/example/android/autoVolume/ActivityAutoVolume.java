@@ -88,7 +88,7 @@ public class ActivityAutoVolume extends AppCompatActivity {
         intervalSeekBar.setProgress(progressValue);
         progressValue *= 5;
 
-        if (progressValue < 10) progressValue = 10;
+        if (progressValue < 1) progressValue = 1;
         long minute = TimeUnit.SECONDS.toMinutes(progressValue);
         long second = progressValue - TimeUnit.SECONDS.toMinutes(progressValue) * 60;
 
@@ -159,7 +159,7 @@ public class ActivityAutoVolume extends AppCompatActivity {
                 editor.putInt(SaveKey.intervalKey, progress);
                 editor.apply();
                 progress *= 5;
-                if (progress < 10) progress = 10;
+                if (progress < 1) progress = 1;
                 EventBus.getDefault().post(new EventChangeInterval((progress))); //To ServiceAutoVolume
 
                 long minute = TimeUnit.SECONDS.toMinutes(progress);

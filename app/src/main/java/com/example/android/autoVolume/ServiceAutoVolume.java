@@ -26,8 +26,6 @@ import java.util.Objects;
 public class ServiceAutoVolume extends Service {
     private static final double EMA_FILTER = 0.6;
     private static final double amp = 10 * Math.exp(-2);
-    int second = 0;
-    int sum = 0;
     private MediaRecorder mediaRecorder;
     private AudioManager audioManager;
     private Notification.Builder builder;
@@ -61,7 +59,7 @@ public class ServiceAutoVolume extends Service {
         micLevel = autoVolumePreferences.getInt(SaveKey.micLevelKey, 100);
         micSensitivity = autoVolumePreferences.getInt(SaveKey.micSensitivityKey, 50);
         changeInterval = autoVolumePreferences.getInt(SaveKey.intervalKey, 6) * 5;
-        if (changeInterval < 10) changeInterval = 10;
+        if (changeInterval < 1) changeInterval = 1;
         SharedPreferences rangePreference = getSharedPreferences(SaveKey.rangePreferenceKey, MODE_PRIVATE);
         ringtoneMin = rangePreference.getInt(SaveKey.ringtoneMinKey, 0);
         ringtoneMax = rangePreference.getInt(SaveKey.ringtoneMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
@@ -267,6 +265,8 @@ public class ServiceAutoVolume extends Service {
     private class CalculatingThread extends Thread {
         @Override
         public void run() {
+            int second = 1;
+            int sum = 0;
             while (mediaRecorder != null && isServiceRunning) {
                 //볼륨이 음소거 되있을때 실행되는것 방지
                 if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT) {
@@ -292,8 +292,8 @@ public class ServiceAutoVolume extends Service {
 
                     if (second < changeInterval) {
                         sum += getVolume(decibel);
-                        second++;
                     } else {
+                        sum += getVolume(decibel);
                         int volume = sum / second;
                         setVolume(volume);
                         second = 0;
@@ -303,6 +303,7 @@ public class ServiceAutoVolume extends Service {
                     //딜레이
                     try {
                         sleep(1000);
+                        second++;
                     } catch (InterruptedException e) {
                         Log.e("[Error]", "InterruptedException");
                     }
