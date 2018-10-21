@@ -34,6 +34,7 @@ public class ServiceAutoVolume extends Service {
 
     private int micLevel;
     private int micSensitivity;
+    private int changeInterval;
     private int ringtoneMin, ringtoneMax, mediaMin, mediaMax, notificationsMin, notificationsMax, alarmMin, alarmMax;
 
     @Override
@@ -58,6 +59,7 @@ public class ServiceAutoVolume extends Service {
         SharedPreferences autoVolumePreferences = getSharedPreferences(SaveKey.autoVolumePreferenceKey, MODE_PRIVATE);
         micLevel = autoVolumePreferences.getInt(SaveKey.micLevelKey, 100);
         micSensitivity = autoVolumePreferences.getInt(SaveKey.micSensitivityKey, 50);
+        changeInterval = autoVolumePreferences.getInt(SaveKey.intervalKey, 6) * 5;
         SharedPreferences rangePreference = getSharedPreferences(SaveKey.rangePreferenceKey, MODE_PRIVATE);
         ringtoneMin = rangePreference.getInt(SaveKey.ringtoneMinKey, 0);
         ringtoneMax = rangePreference.getInt(SaveKey.ringtoneMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
@@ -71,35 +73,43 @@ public class ServiceAutoVolume extends Service {
         isToastShowing = false;
         isServiceRunning = true;
         startRecord(); //녹음 시작
-        new MeasuringThread().start();
+        new CalculatingThread().start();
     }
 
     /**
-     * EventMIcLevel 를 받음
+     * EventMIcLevel 를 받음 from ActivityAutoVolume
      */
     @Subscribe
-    public void changeMIcLevelEvent(EventMIcLevel event) {
+    public void changeMIcLevel(EventMIcLevel event) {
         micLevel = event.micLevel;
     }
 
     /**
-     * EventMicSensitivity 를 받음
+     * EventMicSensitivity 를 받음 from ActivityAutoVolume
      */
     @Subscribe
-    public void changeMicSensitivityEvent(EventMicSensitivity event) {
+    public void changeMicSensitivity(EventMicSensitivity event) {
         micSensitivity = event.value;
     }
 
     /**
-     * EventMainSwitchState 를 받음
+     * EventChangeInterval 를 받음 from ActivityAutoVolume
      */
     @Subscribe
-    public void changeSwitchStateEvent(EventMainSwitchState event) {
+    public void changeInterval(EventChangeInterval event) {
+        changeInterval = event.interval;
+    }
+
+    /**
+     * EventMainSwitchState 를 받음 from ActivityMain
+     */
+    @Subscribe
+    public void changeSwitchState(EventMainSwitchState event) {
         isServiceRunning = event.isChecked;
     }
 
     /**
-     * EventMinMaxValue 를 받아서 볼륨 범위를 변경
+     * EventMinMaxValue 를 받아서 볼륨 범위를 변경 from ActivityRangePopup
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void changeMinMax(EventMinMaxValue event) {
@@ -192,9 +202,9 @@ public class ServiceAutoVolume extends Service {
     }
 
     /**
-     * 데시벨에따라 볼륨 변경
+     * 볼륨이 변경되기전에 볼륨을 구함
      */
-    private void setVolume(int value) {
+    private int getVolume(int value) {
         //마이크 감도에따라 값 조절
         int progressMax = 130 - micSensitivity;
         float ratio = (float) value / progressMax;
@@ -206,8 +216,15 @@ public class ServiceAutoVolume extends Service {
         if (volume > maxVolume) volume = maxVolume;
         if (volume < minVolume) volume = minVolume;
 
+        return volume;
+    }
+
+    /**
+     * 데시벨에따라 볼륨 변경
+     */
+    private void setVolume(int volume) {
         if (volume < 1) volume = 1; //볼륨이 진동모드로 바뀌는 것을 방지
-        //오류 발생을 줄이기 위해 한번더 확인
+        //오류 발생을 줄이기 위해 한번더 무음인지 확인
         if (audioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
             audioManager.setStreamVolume(AudioManager.STREAM_RING, volume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
         }
@@ -245,7 +262,7 @@ public class ServiceAutoVolume extends Service {
     /**
      * 데시벨 측정 스레드
      */
-    private class MeasuringThread extends Thread {
+    private class CalculatingThread extends Thread {
         @Override
         public void run() {
             while (mediaRecorder != null && isServiceRunning) {
@@ -264,13 +281,14 @@ public class ServiceAutoVolume extends Service {
                 } else {
                     isToastShowing = false;
 
+                    Log.d("[ServiceNotice]", "interval: " + changeInterval);
                     int decibel = getDecibel(); //데시벨 구하기
                     decibel += (micLevel - 100); //마이크 수준에따라 값 조절
 
                     if (ActivityAutoVolume.isRunning) { //AutoVolume 액티비티가 실행중이면 progressBar 값 전달
                         EventBus.getDefault().post(new EventProgress(decibel));
                     }
-                    setVolume(decibel);
+                    setVolume(getVolume(decibel));
 
                     //딜레이
                     try {

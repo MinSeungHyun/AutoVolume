@@ -94,7 +94,7 @@ public class ActivityMain extends AppCompatActivity {
     }
 
     /**
-     * EventMinMaxValue 를 받아서 볼륨 범위 텍스트를 변경한다
+     * EventMinMaxValue 를 받아서 볼륨 범위 텍스트를 변경 from ActivityRangePopup
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void changeTV(EventMinMaxValue event) {
@@ -255,13 +255,13 @@ public class ActivityMain extends AppCompatActivity {
                         //서비스 시작
                         Intent service = new Intent(ActivityMain.this, ServiceAutoVolume.class);
                         startService(service);
-                        EventBus.getDefault().post(new EventMainSwitchState(true));
+                        EventBus.getDefault().post(new EventMainSwitchState(true)); //To ServiceAutoVolume
                     }
                 } else {
                     //비활성화
                     setDisableByMainSwitch();
                     //서비스 종료
-                    EventBus.getDefault().post(new EventMainSwitchState(false));
+                    EventBus.getDefault().post(new EventMainSwitchState(false)); //To ServiceAutoVolume
                     Intent service = new Intent(ActivityMain.this, ServiceAutoVolume.class);
                     stopService(service);
                 }

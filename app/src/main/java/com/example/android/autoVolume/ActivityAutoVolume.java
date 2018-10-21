@@ -121,7 +121,7 @@ public class ActivityAutoVolume extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 editor.putInt(SaveKey.micLevelKey, progress);
                 editor.apply();
-                EventBus.getDefault().post(new EventMIcLevel(progress));
+                EventBus.getDefault().post(new EventMIcLevel(progress)); //To ServiceAutoVolume
             }
 
             @Override
@@ -140,7 +140,7 @@ public class ActivityAutoVolume extends AppCompatActivity {
                 editor.putInt(SaveKey.micSensitivityKey, progress);
                 editor.apply();
                 noiseProgressBar.setMax(130 - progress);
-                EventBus.getDefault().post(new EventMicSensitivity(progress));
+                EventBus.getDefault().post(new EventMicSensitivity(progress)); //To ServiceAutoVolume
             }
 
             @Override
@@ -160,6 +160,7 @@ public class ActivityAutoVolume extends AppCompatActivity {
                 editor.apply();
                 progress *= 5;
                 if (progress < 10) progress = 10;
+                EventBus.getDefault().post(new EventChangeInterval((progress))); //To ServiceAutoVolume
 
                 long minute = TimeUnit.SECONDS.toMinutes(progress);
                 long second = progress - TimeUnit.SECONDS.toMinutes(progress) * 60;
