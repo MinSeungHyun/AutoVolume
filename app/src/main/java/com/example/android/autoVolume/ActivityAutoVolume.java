@@ -93,16 +93,17 @@ public class ActivityAutoVolume extends AppCompatActivity {
         long second = progressValue - TimeUnit.SECONDS.toMinutes(progressValue) * 60;
 
         if (Locale.getDefault().getDisplayLanguage().equals("English")) {
-            if (minute > 1) {
-                String text = minute + getString(R.string.minute) + "s " + second + getString(R.string.second);
-                intervalTextView.setText(text);
-            }
-            if (second > 1) {
-                String text = minute + getString(R.string.minute) + " " + second + getString(R.string.second) + "s";
-                intervalTextView.setText(text);
-            }
             if (second > 1 && minute > 1) {
                 String text = minute + getString(R.string.minute) + "s " + second + getString(R.string.second) + "s";
+                intervalTextView.setText(text);
+            } else if (minute > 1) {
+                String text = minute + getString(R.string.minute) + "s " + second + getString(R.string.second);
+                intervalTextView.setText(text);
+            } else if (second > 1) {
+                String text = minute + getString(R.string.minute) + " " + second + getString(R.string.second) + "s";
+                intervalTextView.setText(text);
+            } else {
+                String text = minute + getString(R.string.minute) + " " + second + getString(R.string.second);
                 intervalTextView.setText(text);
             }
         } else {

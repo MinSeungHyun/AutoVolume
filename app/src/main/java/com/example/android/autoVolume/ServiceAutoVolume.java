@@ -267,6 +267,7 @@ public class ServiceAutoVolume extends Service {
         public void run() {
             int second = 1;
             int sum = 0;
+            int time = 0;
             while (mediaRecorder != null && isServiceRunning) {
                 //볼륨이 음소거 되있을때 실행되는것 방지
                 if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT) {
@@ -290,23 +291,28 @@ public class ServiceAutoVolume extends Service {
                         EventBus.getDefault().post(new EventProgress(decibel));
                     }
 
-                    if (second < changeInterval) {
-                        sum += getVolume(decibel);
-                    } else {
-                        sum += getVolume(decibel);
-                        int volume = sum / second;
-                        setVolume(volume);
-                        second = 0;
-                        sum = 0;
+                    if (time >= 1000) {
+                        time = 0;
+                        second++;
+                        Log.d("service", "run");
+                        if (second < changeInterval) {
+                            sum += getVolume(decibel);
+                        } else {
+                            sum += getVolume(decibel);
+                            int volume = sum / second;
+                            setVolume(volume);
+                            second = 0;
+                            sum = 0;
+                        }
                     }
-
                     //딜레이
                     try {
-                        sleep(1000);
-                        second++;
+                        sleep(200);
                     } catch (InterruptedException e) {
                         Log.e("[Error]", "InterruptedException");
                     }
+                    time += 200;
+                    Log.d("service", time + "");
                 }
             }
         }
