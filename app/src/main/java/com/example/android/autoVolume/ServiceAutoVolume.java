@@ -25,7 +25,7 @@ import java.util.Objects;
 public class ServiceAutoVolume extends Service {
     private static final double EMA_FILTER = 0.6;
     private static final double amp = 10 * Math.exp(-2);
-    static Boolean isRunning;
+    static boolean isRunning;
     private AudioManager audioManager;
     private Notification.Builder builder;
     private Boolean isToastShowing;

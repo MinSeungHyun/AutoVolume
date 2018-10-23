@@ -21,7 +21,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -40,7 +39,7 @@ public class ActivityMain extends AppCompatActivity {
     //etc
     long time = 0;
     //view
-    private TextView mainTextView, textView_1, textView_2, textView_3, textView_4,
+    private TextView textView_1, textView_2, textView_3, textView_4,
             minRingtone, maxRingtone, minMedia, maxMedia, minNotifications, maxNotifications, minAlarm, maxAlarm;
     private Switch mainSwitch;
     private View highlightSwitch;
@@ -122,7 +121,6 @@ public class ActivityMain extends AppCompatActivity {
      * 모든 뷰들의 참조
      */
     private void findViews() {
-        mainTextView = findViewById(R.id.main_text);
         textView_1 = findViewById(R.id.textView_1);
         textView_2 = findViewById(R.id.textView_2);
         textView_3 = findViewById(R.id.textView_3);
@@ -271,21 +269,8 @@ public class ActivityMain extends AppCompatActivity {
         topLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mainSwitch.isChecked()) {
-                    Intent intent = new Intent(ActivityMain.this, ActivityAutoVolume.class);
-                    startActivity(intent);
-                } else {
-                    //강조
-                    ValueAnimator animation = ValueAnimator.ofFloat(1f, 0f);
-                    animation.setDuration(1000);
-                    animation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                        @Override
-                        public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                            highlightSwitch.setAlpha((float) valueAnimator.getAnimatedValue());
-                        }
-                    });
-                    animation.start();
-                }
+                Intent intent = new Intent(ActivityMain.this, ActivityAutoVolume.class);
+                startActivity(intent);
             }
         });
 
@@ -407,7 +392,6 @@ public class ActivityMain extends AppCompatActivity {
      * mainSwitch 의 값에따라 항목들 활성화
      */
     private void setEnableByMainSwitch() {
-        mainTextView.setAlpha(1f);
         imageView_1.setAlpha(1f);
         imageView_2.setAlpha(1f);
         imageView_3.setAlpha(1f);
@@ -416,16 +400,12 @@ public class ActivityMain extends AppCompatActivity {
         textView_2.setAlpha(1f);
         textView_3.setAlpha(1f);
         textView_4.setAlpha(1f);
-        final TypedValue outValue = new TypedValue();
-        getApplicationContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
-        topLinearLayout.setBackgroundResource(outValue.resourceId);
     }
 
     /**
      * mainSwitch 의 값에따라 항목들 비활성화
      */
     private void setDisableByMainSwitch() {
-        mainTextView.setAlpha(0.8f);
         imageView_1.setAlpha(0.5f);
         imageView_2.setAlpha(0.5f);
         imageView_3.setAlpha(0.5f);
@@ -434,7 +414,6 @@ public class ActivityMain extends AppCompatActivity {
         textView_2.setAlpha(0.5f);
         textView_3.setAlpha(0.5f);
         textView_4.setAlpha(0.5f);
-        topLinearLayout.setBackground(null);
     }
 
     /**

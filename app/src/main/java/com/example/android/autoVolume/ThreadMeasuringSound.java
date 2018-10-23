@@ -1,6 +1,7 @@
 package com.example.android.autoVolume;
 
 import android.media.MediaRecorder;
+import android.support.v7.view.menu.MenuAdapter;
 import android.util.Log;
 
 public class ThreadMeasuringSound extends Thread {
@@ -9,13 +10,14 @@ public class ThreadMeasuringSound extends Thread {
     private static final double mEMA = 0.0;
     static boolean isRunning = false;
     static int decibel = 0;
+    private MediaRecorder mediaRecorder;
 
     @Override
     public void run() {
         super.run();
         //mediaRecorder 세팅
         isRunning = true;
-        MediaRecorder mediaRecorder = new MediaRecorder();
+        mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
@@ -41,6 +43,8 @@ public class ThreadMeasuringSound extends Thread {
                 Log.e("[Error]", "InterruptedException");
             }
         }
+        mediaRecorder.release();
+        mediaRecorder = null;
     }
 
     @Override

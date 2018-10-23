@@ -15,7 +15,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class ActivityAutoVolume extends AppCompatActivity {
-    static Boolean isRunning = false;
+    static boolean isRunning = false;
     private ProgressBar noiseProgressBar;
     private SeekBar micLevelSeekBar, micSensitivitySeekBar, intervalSeekBar;
     private TextView intervalTextView;
