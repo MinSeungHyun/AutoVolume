@@ -4,31 +4,29 @@ import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class ActivityAutoVolume extends AppCompatActivity {
-    static public Boolean isRunning = false;
-    ProgressBar noiseProgressBar;
-    SeekBar micLevelSeekBar, micSensitivitySeekBar, intervalSeekBar;
-    TextView intervalTextView;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
+    static Boolean isRunning = false;
+    private ProgressBar noiseProgressBar;
+    private SeekBar micLevelSeekBar, micSensitivitySeekBar, intervalSeekBar;
+    private TextView intervalTextView;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(R.string.auto_volume);
         setContentView(R.layout.auto_volume);
-        EventBus.getDefault().register(this); //EventBus register
         isRunning = true;
 
         getReferences();
@@ -39,6 +37,10 @@ public class ActivityAutoVolume extends AppCompatActivity {
         EventBus.getDefault().post(new EventMIcLevel(micSensitivitySeekBar.getProgress()));
         EventBus.getDefault().post(new EventMIcLevel(micLevelSeekBar.getProgress()));
         noiseProgressBar.setMax(130 - sharedPreferences.getInt(SaveKey.micSensitivityKey, 50));
+
+        if (!ThreadMeasuringSound.isRunning)
+            new ThreadMeasuringSound().start();
+        new ChangeProgressBarThread().start();
     }
 
     /**
@@ -48,15 +50,7 @@ public class ActivityAutoVolume extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         isRunning = false;
-        EventBus.getDefault().unregister(this); //EventBus unregister
-    }
-
-    /**
-     * EventProgress 를 받는 메소드를 작성한다
-     */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void changeProgressEvent(EventProgress event) {
-        noiseProgressBar.setProgress(event.decibel);
+        if (!ServiceAutoVolume.isRunning) new ThreadMeasuringSound().interrupt();
     }
 
     /**
@@ -205,5 +199,24 @@ public class ActivityAutoVolume extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private class ChangeProgressBarThread extends Thread {
+        @Override
+        public void run() {
+            while (isRunning) {
+                int decibel = ThreadMeasuringSound.decibel;
+                decibel += (micLevelSeekBar.getProgress() - 100);
+                noiseProgressBar.setProgress(decibel);
+
+                Log.d("Notice", "AutoVolume Thread Running");
+                //딜레이
+                try {
+                    sleep(500);
+                } catch (InterruptedException e) {
+                    Log.e("[Error]", "InterruptedException");
+                }
+            }
+        }
     }
 }

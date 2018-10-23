@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
-import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -26,11 +25,10 @@ import java.util.Objects;
 public class ServiceAutoVolume extends Service {
     private static final double EMA_FILTER = 0.6;
     private static final double amp = 10 * Math.exp(-2);
-    private MediaRecorder mediaRecorder;
+    static Boolean isRunning;
     private AudioManager audioManager;
     private Notification.Builder builder;
     private Boolean isToastShowing;
-    private Boolean isServiceRunning;
     private int micLevel;
     private int micSensitivity;
     private int changeInterval;
@@ -77,8 +75,8 @@ public class ServiceAutoVolume extends Service {
         isAlarmOn = isOnPreference.getBoolean(SaveKey.alarmStateKey, false);
 
         isToastShowing = false;
-        isServiceRunning = true;
-        startRecord(); //녹음 시작
+        isRunning = true;
+        if (!ThreadMeasuringSound.isRunning) new ThreadMeasuringSound().start();
         new CalculatingThread().start();
     }
 
@@ -111,7 +109,7 @@ public class ServiceAutoVolume extends Service {
      */
     @Subscribe
     public void changeSwitchState(EventMainSwitchState event) {
-        isServiceRunning = event.isChecked;
+        isRunning = event.isChecked;
     }
 
     /**
@@ -151,71 +149,13 @@ public class ServiceAutoVolume extends Service {
     }
 
     /**
-     * startService 로 실행될 때마다 호출
-     */
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    /**
      * stopService 로 중지될 떄마다 호출
      */
     @Override
     public void onDestroy() {
-        isServiceRunning = false;
-        stopRecord();
+        isRunning = false;
         EventBus.getDefault().unregister(this); //EventBus unregister
-    }
-
-    /**
-     * start record
-     */
-    private void startRecord() {
-        if (mediaRecorder == null) {
-            //set media recorder
-            mediaRecorder = new MediaRecorder();
-            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-            mediaRecorder.setOutputFile("/dev/null");
-        }
-        //start record
-        try {
-            mediaRecorder.prepare();
-            mediaRecorder.start();
-        } catch (java.io.IOException ioe) {
-            Log.e("[Error]", "IOException: " + android.util.Log.getStackTraceString(ioe));
-        } catch (IllegalStateException ISe) {
-            Log.e("[Error]", "IllegalStateException: " + android.util.Log.getStackTraceString(ISe));
-        }
-    }
-
-    /**
-     * stop record
-     */
-    private void stopRecord() {
-        if (mediaRecorder != null) {
-            mediaRecorder.release();
-            mediaRecorder = null;
-        }
-    }
-
-    /**
-     * 데시벨 계산
-     */
-    private int getDecibel() {
-        if (mediaRecorder != null && isServiceRunning) {
-            int decibel;
-            int amplitude = mediaRecorder.getMaxAmplitude();
-            double mEMA = 0.0;
-
-            decibel = (int) (long) Math.round(20 * Math.log10(EMA_FILTER * amplitude + (1.0 - EMA_FILTER) * mEMA / amp));
-
-            return decibel;
-        } else {
-            return 0;
-        }
+        if (!ActivityAutoVolume.isRunning) new ThreadMeasuringSound().interrupt();
     }
 
     /**
@@ -282,10 +222,9 @@ public class ServiceAutoVolume extends Service {
     private class CalculatingThread extends Thread {
         @Override
         public void run() {
-            int second = 1;
+            int time = 1;
             int sum = 0;
-            int time = 0;
-            while (mediaRecorder != null && isServiceRunning) {
+            while (isRunning) {
                 //볼륨이 음소거 되있을때 실행되는것 방지
                 if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT) {
                     if (!isToastShowing) {
@@ -300,36 +239,26 @@ public class ServiceAutoVolume extends Service {
                     }
                 } else {
                     isToastShowing = false;
-
-                    int decibel = getDecibel(); //데시벨 구하기
+                    int decibel = ThreadMeasuringSound.decibel;
                     decibel += (micLevel - 100); //마이크 수준에따라 값 조절
 
-                    if (ActivityAutoVolume.isRunning) { //AutoVolume 액티비티가 실행중이면 progressBar 값 전달
-                        EventBus.getDefault().post(new EventProgress(decibel));
-                    }
-
-                    if (time >= 1000) {
+                    time++;
+                    if (time < changeInterval) {
+                        sum += getVolume(decibel);
+                    } else {
+                        sum += getVolume(decibel);
+                        int volume = sum / time;
+                        setVolume(volume);
                         time = 0;
-                        second++;
-                        Log.d("service", "run");
-                        if (second < changeInterval) {
-                            sum += getVolume(decibel);
-                        } else {
-                            sum += getVolume(decibel);
-                            int volume = sum / second;
-                            setVolume(volume);
-                            second = 0;
-                            sum = 0;
-                        }
+                        sum = 0;
                     }
+                    Log.d("Notice", "Service Thread Running");
                     //딜레이
                     try {
-                        sleep(200);
+                        sleep(1000);
                     } catch (InterruptedException e) {
                         Log.e("[Error]", "InterruptedException");
                     }
-                    time += 200;
-                    Log.d("service", time + "");
                 }
             }
         }

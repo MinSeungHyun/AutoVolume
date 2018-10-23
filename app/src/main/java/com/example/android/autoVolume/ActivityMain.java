@@ -37,21 +37,21 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.Objects;
 
 public class ActivityMain extends AppCompatActivity {
-    //view
-    TextView mainTextView, textView_1, textView_2, textView_3, textView_4,
-            minRingtone, maxRingtone, minMedia, maxMedia, minNotifications, maxNotifications, minAlarm, maxAlarm;
-    Switch mainSwitch;
-    View highlightSwitch;
-    LinearLayout topLinearLayout, linearLayout_1, linearLayout_2, linearLayout_3, linearLayout_4,
-            rangeLinearLayout_1, rangeLinearLayout_2, rangeLinearLayout_3, rangeLinearLayout_4;
-    ImageView imageView_1, imageView_2, imageView_3, imageView_4;
-    //sharedPreference
-    SharedPreferences switchPreference, volumeRangePreference;
-    SharedPreferences.Editor switchPreferenceEditor;
-    //audioManager
-    AudioManager audioManager;
     //etc
     long time = 0;
+    //view
+    private TextView mainTextView, textView_1, textView_2, textView_3, textView_4,
+            minRingtone, maxRingtone, minMedia, maxMedia, minNotifications, maxNotifications, minAlarm, maxAlarm;
+    private Switch mainSwitch;
+    private View highlightSwitch;
+    private LinearLayout topLinearLayout, linearLayout_1, linearLayout_2, linearLayout_3, linearLayout_4,
+            rangeLinearLayout_1, rangeLinearLayout_2, rangeLinearLayout_3, rangeLinearLayout_4;
+    private ImageView imageView_1, imageView_2, imageView_3, imageView_4;
+    //sharedPreference
+    private SharedPreferences switchPreference, volumeRangePreference;
+    private SharedPreferences.Editor switchPreferenceEditor;
+    //audioManager
+    private AudioManager audioManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +88,7 @@ public class ActivityMain extends AppCompatActivity {
      * 앱이 종료될때 이벤트버스 unregister
      */
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this); //EventBus unregister
     }
@@ -121,7 +121,7 @@ public class ActivityMain extends AppCompatActivity {
     /**
      * 모든 뷰들의 참조
      */
-    public void findViews() {
+    private void findViews() {
         mainTextView = findViewById(R.id.main_text);
         textView_1 = findViewById(R.id.textView_1);
         textView_2 = findViewById(R.id.textView_2);
@@ -406,7 +406,7 @@ public class ActivityMain extends AppCompatActivity {
     /**
      * mainSwitch 의 값에따라 항목들 활성화
      */
-    public void setEnableByMainSwitch() {
+    private void setEnableByMainSwitch() {
         mainTextView.setAlpha(1f);
         imageView_1.setAlpha(1f);
         imageView_2.setAlpha(1f);
@@ -424,7 +424,7 @@ public class ActivityMain extends AppCompatActivity {
     /**
      * mainSwitch 의 값에따라 항목들 비활성화
      */
-    public void setDisableByMainSwitch() {
+    private void setDisableByMainSwitch() {
         mainTextView.setAlpha(0.8f);
         imageView_1.setAlpha(0.5f);
         imageView_2.setAlpha(0.5f);
