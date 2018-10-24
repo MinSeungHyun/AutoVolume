@@ -23,15 +23,10 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.Objects;
 
 public class ServiceAutoVolume extends Service {
-    private static final double EMA_FILTER = 0.6;
-    private static final double amp = 10 * Math.exp(-2);
     static boolean isRunning;
     private AudioManager audioManager;
     private Notification.Builder builder;
     private Boolean isToastShowing;
-    private int micLevel;
-    private int micSensitivity;
-    private int changeInterval;
     private int ringtoneMin, ringtoneMax, mediaMin, mediaMax, notificationsMin, notificationsMax, alarmMin, alarmMax;
     private boolean isRingtoneOn, isMediaOn, isNotificationsOn, isAlarmOn;
 
@@ -55,10 +50,11 @@ public class ServiceAutoVolume extends Service {
 
         //초기값 설정
         SharedPreferences autoVolumePreferences = getSharedPreferences(SaveKey.autoVolumePreferenceKey, MODE_PRIVATE);
-        micLevel = autoVolumePreferences.getInt(SaveKey.micLevelKey, 100);
-        micSensitivity = autoVolumePreferences.getInt(SaveKey.micSensitivityKey, 50);
-        changeInterval = autoVolumePreferences.getInt(SaveKey.intervalKey, 6) * 5;
-        if (changeInterval < 1) changeInterval = 1;
+        SaveValues.micLevel = autoVolumePreferences.getInt(SaveKey.micLevelKey, 100);
+        SaveValues.micSensitivity = autoVolumePreferences.getInt(SaveKey.micSensitivityKey, 50);
+        SaveValues.changeInterval = autoVolumePreferences.getInt(SaveKey.intervalKey, 6) * 5;
+        if (SaveValues.changeInterval < 1) SaveValues.changeInterval = 1;
+
         SharedPreferences rangePreference = getSharedPreferences(SaveKey.rangePreferenceKey, MODE_PRIVATE);
         ringtoneMin = rangePreference.getInt(SaveKey.ringtoneMinKey, 0);
         ringtoneMax = rangePreference.getInt(SaveKey.ringtoneMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
@@ -68,59 +64,11 @@ public class ServiceAutoVolume extends Service {
         notificationsMax = rangePreference.getInt(SaveKey.notificationsMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION));
         alarmMin = rangePreference.getInt(SaveKey.alarmMinKey, 0);
         alarmMax = rangePreference.getInt(SaveKey.alarmMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
-        SharedPreferences isOnPreference = getSharedPreferences(SaveKey.switchPreferenceKey, MODE_PRIVATE);
-        isRingtoneOn = isOnPreference.getBoolean(SaveKey.ringtoneStateKey, false);
-        isMediaOn = isOnPreference.getBoolean(SaveKey.mediaStateKey, false);
-        isNotificationsOn = isOnPreference.getBoolean(SaveKey.notificationsStateKey, false);
-        isAlarmOn = isOnPreference.getBoolean(SaveKey.alarmStateKey, false);
 
         isToastShowing = false;
         isRunning = true;
         if (!ThreadMeasuringSound.isRunning) new ThreadMeasuringSound().start();
         new CalculatingThread().start();
-    }
-
-    /**
-     * EventMIcLevel 를 받음 from ActivityAutoVolume
-     */
-    @Subscribe
-    public void changeMIcLevel(EventMIcLevel event) {
-        micLevel = event.micLevel;
-    }
-
-    /**
-     * EventMicSensitivity 를 받음 from ActivityAutoVolume
-     */
-    @Subscribe
-    public void changeMicSensitivity(EventMicSensitivity event) {
-        micSensitivity = event.value;
-    }
-
-    /**
-     * EventChangeInterval 를 받음 from ActivityAutoVolume
-     */
-    @Subscribe
-    public void changeInterval(EventChangeInterval event) {
-        changeInterval = event.interval;
-    }
-
-    /**
-     * EventMainSwitchState 를 받음 from ActivityMain
-     */
-    @Subscribe
-    public void changeSwitchState(EventMainSwitchState event) {
-        isRunning = event.isChecked;
-    }
-
-    /**
-     * EventIsOn 를 받음 from ActivityMain
-     */
-    @Subscribe
-    public void changeIsOnState(EventIsOn event) {
-        isRingtoneOn = event.ringtone;
-        isMediaOn = event.media;
-        isNotificationsOn = event.notifications;
-        isAlarmOn = event.alarm;
     }
 
     /**
@@ -163,7 +111,7 @@ public class ServiceAutoVolume extends Service {
      */
     private int getVolume(int value) {
         //마이크 감도에따라 값 조절
-        int progressMax = 130 - micSensitivity;
+        int progressMax = 130 - SaveValues.micSensitivity;
         float ratio = (float) value / progressMax;
         //볼륨 범위에 따라 값 조절
         int minVolume = ringtoneMin;
@@ -224,7 +172,7 @@ public class ServiceAutoVolume extends Service {
         public void run() {
             int time = 1;
             int sum = 0;
-            while (isRunning) {
+            while (SaveValues.isAutoVolumeOn) {
                 //볼륨이 음소거 되있을때 실행되는것 방지
                 if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT) {
                     if (!isToastShowing) {
@@ -240,10 +188,10 @@ public class ServiceAutoVolume extends Service {
                 } else {
                     isToastShowing = false;
                     int decibel = ThreadMeasuringSound.decibel;
-                    decibel += (micLevel - 100); //마이크 수준에따라 값 조절
+                    decibel += (SaveValues.micLevel - 100); //마이크 수준에따라 값 조절
 
                     time++;
-                    if (time < changeInterval) {
+                    if (time < SaveValues.changeInterval) {
                         sum += getVolume(decibel);
                     } else {
                         sum += getVolume(decibel);

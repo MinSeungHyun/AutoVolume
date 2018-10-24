@@ -9,8 +9,6 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -34,8 +32,8 @@ public class ActivityAutoVolume extends AppCompatActivity {
         setListener();
 
         //초기화
-        EventBus.getDefault().post(new EventMIcLevel(micSensitivitySeekBar.getProgress()));
-        EventBus.getDefault().post(new EventMIcLevel(micLevelSeekBar.getProgress()));
+        SaveValues.micSensitivity = micSensitivitySeekBar.getProgress();
+        SaveValues.micLevel = micLevelSeekBar.getProgress();
         noiseProgressBar.setMax(130 - sharedPreferences.getInt(SaveKey.micSensitivityKey, 50));
 
         if (!ThreadMeasuringSound.isRunning)
@@ -116,7 +114,7 @@ public class ActivityAutoVolume extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 editor.putInt(SaveKey.micLevelKey, progress);
                 editor.apply();
-                EventBus.getDefault().post(new EventMIcLevel(progress)); //To ServiceAutoVolume
+                SaveValues.micLevel = progress;
             }
 
             @Override
@@ -135,7 +133,7 @@ public class ActivityAutoVolume extends AppCompatActivity {
                 editor.putInt(SaveKey.micSensitivityKey, progress);
                 editor.apply();
                 noiseProgressBar.setMax(130 - progress);
-                EventBus.getDefault().post(new EventMicSensitivity(progress)); //To ServiceAutoVolume
+                SaveValues.micSensitivity = micSensitivitySeekBar.getProgress();
             }
 
             @Override
@@ -155,7 +153,7 @@ public class ActivityAutoVolume extends AppCompatActivity {
                 editor.apply();
                 progress *= 5;
                 if (progress < 1) progress = 1;
-                EventBus.getDefault().post(new EventChangeInterval((progress))); //To ServiceAutoVolume
+                SaveValues.changeInterval = progress;
 
                 long minute = TimeUnit.SECONDS.toMinutes(progress);
                 long second = progress - TimeUnit.SECONDS.toMinutes(progress) * 60;

@@ -183,6 +183,10 @@ public class ActivityMain extends AppCompatActivity {
         setIconTV(imageView_2, textView_2, isChecked_2);
         setIconTV(imageView_3, textView_3, isChecked_3);
         setIconTV(imageView_4, textView_4, isChecked_4);
+        SaveValues.isRingtoneOn = isChecked_1;
+        SaveValues.isMediaOn = isChecked_2;
+        SaveValues.isNotificationsOn = isChecked_3;
+        SaveValues.isAlarmOn = isChecked_4;
 
     }
 
@@ -253,13 +257,13 @@ public class ActivityMain extends AppCompatActivity {
                         //서비스 시작
                         Intent service = new Intent(ActivityMain.this, ServiceAutoVolume.class);
                         startService(service);
-                        EventBus.getDefault().post(new EventMainSwitchState(true)); //To ServiceAutoVolume
+                        SaveValues.isAutoVolumeOn = true;
                     }
                 } else {
                     //비활성화
                     setDisableByMainSwitch();
                     //서비스 종료
-                    EventBus.getDefault().post(new EventMainSwitchState(false)); //To ServiceAutoVolume
+                    SaveValues.isAutoVolumeOn = false;
                     Intent service = new Intent(ActivityMain.this, ServiceAutoVolume.class);
                     stopService(service);
                 }
@@ -280,55 +284,58 @@ public class ActivityMain extends AppCompatActivity {
                 if (mainSwitch.isChecked()) {
                     switch (view.getId()) {
                         case R.id.linearLayout_1:
-                            if (switchPreference.getBoolean(SaveKey.ringtoneStateKey, false)) {
+                            if (SaveValues.isRingtoneOn) {
                                 switchPreferenceEditor.putBoolean(SaveKey.ringtoneStateKey, false);
                                 switchPreferenceEditor.apply();
+                                SaveValues.isRingtoneOn = false;
                                 setIconTV(imageView_1, textView_1, false);
                             } else {
                                 switchPreferenceEditor.putBoolean(SaveKey.ringtoneStateKey, true);
                                 switchPreferenceEditor.apply();
+                                SaveValues.isRingtoneOn = true;
                                 setIconTV(imageView_1, textView_1, true);
                             }
                             break;
                         case R.id.linearLayout_2:
-                            if (switchPreference.getBoolean(SaveKey.mediaStateKey, false)) {
+                            if (SaveValues.isMediaOn) {
                                 switchPreferenceEditor.putBoolean(SaveKey.mediaStateKey, false);
                                 switchPreferenceEditor.apply();
+                                SaveValues.isMediaOn = false;
                                 setIconTV(imageView_2, textView_2, false);
                             } else {
                                 switchPreferenceEditor.putBoolean(SaveKey.mediaStateKey, true);
                                 switchPreferenceEditor.apply();
+                                SaveValues.isMediaOn = true;
                                 setIconTV(imageView_2, textView_2, true);
                             }
                             break;
                         case R.id.linearLayout_3:
-                            if (switchPreference.getBoolean(SaveKey.notificationsStateKey, false)) {
+                            if (SaveValues.isNotificationsOn) {
                                 switchPreferenceEditor.putBoolean(SaveKey.notificationsStateKey, false);
                                 switchPreferenceEditor.apply();
+                                SaveValues.isNotificationsOn = false;
                                 setIconTV(imageView_3, textView_3, false);
                             } else {
                                 switchPreferenceEditor.putBoolean(SaveKey.notificationsStateKey, true);
                                 switchPreferenceEditor.apply();
+                                SaveValues.isNotificationsOn = true;
                                 setIconTV(imageView_3, textView_3, true);
                             }
                             break;
                         case R.id.linearLayout_4:
-                            if (switchPreference.getBoolean(SaveKey.alarmStateKey, false)) {
+                            if (SaveValues.isAlarmOn) {
                                 switchPreferenceEditor.putBoolean(SaveKey.alarmStateKey, false);
                                 switchPreferenceEditor.apply();
+                                SaveValues.isAlarmOn = false;
                                 setIconTV(imageView_4, textView_4, false);
                             } else {
                                 switchPreferenceEditor.putBoolean(SaveKey.alarmStateKey, true);
                                 switchPreferenceEditor.apply();
+                                SaveValues.isAlarmOn = true;
                                 setIconTV(imageView_4, textView_4, true);
                             }
                             break;
                     }
-                    EventBus.getDefault().post(new EventIsOn(
-                            switchPreference.getBoolean(SaveKey.ringtoneStateKey, false),
-                            switchPreference.getBoolean(SaveKey.mediaStateKey, false),
-                            switchPreference.getBoolean(SaveKey.notificationsStateKey, false),
-                            switchPreference.getBoolean(SaveKey.alarmStateKey, false))); //To ServiceAutoVolume
                 } else {
                     //강조
                     ValueAnimator animation = ValueAnimator.ofFloat(1f, 0f);
