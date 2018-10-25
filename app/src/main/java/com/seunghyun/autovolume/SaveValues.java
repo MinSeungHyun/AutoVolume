@@ -1,4 +1,4 @@
-package com.example.android.autoVolume;
+package com.seunghyun.autovolume;
 
 class SaveValues {
     static final class Keys {

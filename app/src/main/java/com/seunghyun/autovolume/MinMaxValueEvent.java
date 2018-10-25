@@ -1,4 +1,4 @@
-package com.example.android.autoVolume;
+package com.seunghyun.autovolume;
 
 class MinMaxValueEvent {
     String keyName;

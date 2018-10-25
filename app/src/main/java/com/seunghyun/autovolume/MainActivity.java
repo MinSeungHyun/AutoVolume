@@ -1,4 +1,4 @@
-package com.example.android.autoVolume;
+package com.seunghyun.autovolume;
 
 import android.Manifest;
 import android.animation.ValueAnimator;

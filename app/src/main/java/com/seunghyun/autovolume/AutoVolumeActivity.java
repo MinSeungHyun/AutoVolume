@@ -1,4 +1,4 @@
-package com.example.android.autoVolume;
+package com.seunghyun.autovolume;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
@@ -207,7 +207,6 @@ public class AutoVolumeActivity extends AppCompatActivity {
                 decibel += (micLevelSeekBar.getProgress() - 100);
                 noiseProgressBar.setProgress(decibel);
 
-                Log.d("Notice", "AutoVolume Thread Running");
                 //딜레이
                 try {
                     sleep(500);

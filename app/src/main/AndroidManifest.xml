@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.android.autoVolume">
+    package="com.seunghyun.autovolume">
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -14,22 +14,22 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity
-            android:name=".MainActivity">
+            android:name="com.seunghyun.autovolume.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AutoVolumeActivity">
+        <activity android:name="com.seunghyun.autovolume.AutoVolumeActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.seunghyun.autovolume.MainActivity" />
         </activity>
         <activity
-            android:name=".RangePopupActivity"
+            android:name="com.seunghyun.autovolume.RangePopupActivity"
             android:theme="@style/Theme.AppCompat.Dialog" />
 
-        <service android:name=".AutoVolumeService" />
+        <service android:name="com.seunghyun.autovolume.AutoVolumeService" />
     </application>
 
 </manifest>

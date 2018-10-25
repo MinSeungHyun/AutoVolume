@@ -1,4 +1,4 @@
-package com.example.android.autoVolume;
+package com.seunghyun.autovolume;
 
 import android.media.MediaRecorder;
 import android.util.Log;
@@ -33,7 +33,6 @@ public class MeasuringSoundThread extends Thread {
             int amplitude = mediaRecorder.getMaxAmplitude();
             decibel = (int) (long) Math.round(20 * Math.log10(EMA_FILTER * amplitude + (1.0 - EMA_FILTER) * mEMA / amp));
 
-            Log.d("Notice", "Measuring Thread Running");
             //딜레이
             try {
                 sleep(200);

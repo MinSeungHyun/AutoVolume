@@ -1,4 +1,4 @@
-package com.example.android.autoVolume;
+package com.seunghyun.autovolume;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -201,7 +201,6 @@ public class AutoVolumeService extends Service {
                         time = 0;
                         sum = 0;
                     }
-                    Log.d("Notice", "Service Thread Running");
                     //딜레이
                     try {
                         sleep(1000);
