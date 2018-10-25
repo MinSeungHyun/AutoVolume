@@ -28,7 +28,6 @@ public class AutoVolumeService extends Service {
     private Notification.Builder builder;
     private Boolean isToastShowing;
     private int ringtoneMin, ringtoneMax, mediaMin, mediaMax, notificationsMin, notificationsMax, alarmMin, alarmMax;
-    private boolean isRingtoneOn, isMediaOn, isNotificationsOn, isAlarmOn;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -111,8 +110,9 @@ public class AutoVolumeService extends Service {
      */
     private int getVolume(int value) {
         //마이크 감도에따라 값 조절
-        int progressMax = 130 - SaveValues.StateValues.micSensitivity;
+        int progressMax = SaveValues.DefValues.noiseProgressBarMax - SaveValues.StateValues.micSensitivity;
         float ratio = (float) value / progressMax;
+
         //볼륨 범위에 따라 값 조절
         int minVolume = ringtoneMin;
         int maxVolume = ringtoneMax;
@@ -120,7 +120,6 @@ public class AutoVolumeService extends Service {
         int volume = Math.round(range * ratio) + minVolume;
         if (volume > maxVolume) volume = maxVolume;
         if (volume < minVolume) volume = minVolume;
-
         return volume;
     }
 
@@ -129,7 +128,6 @@ public class AutoVolumeService extends Service {
      */
     private void setVolume(int volume) {
         if (volume < 1) volume = 1; //볼륨이 진동모드로 바뀌는 것을 방지
-        //오류 발생을 줄이기 위해 한번더 무음인지 확인
         if (audioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
             audioManager.setStreamVolume(AudioManager.STREAM_RING, volume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
         }
@@ -138,7 +136,7 @@ public class AutoVolumeService extends Service {
     /**
      * 알림 설정
      */
-    public void setNotification() {
+    private void setNotification() {
         //SDK 가 26이상이면 channel 설정, 아니면 일반 설정
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -190,7 +188,7 @@ public class AutoVolumeService extends Service {
                     int decibel = MeasuringSoundThread.decibel;
                     decibel += (SaveValues.StateValues.micLevel - 100); //마이크 수준에따라 값 조절
 
-                    //볼륨 평균 계산
+                    //변경 간격동안 볼륨 평균 계산
                     time++;
                     if (time < SaveValues.StateValues.changeInterval) {
                         sum += getVolume(decibel);

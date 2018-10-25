@@ -57,5 +57,6 @@ class SaveValues {
         static final int micLevel = 100;
         static final int micSensitivity = 50;
         static final int changeInterval = 6;
+        static final int noiseProgressBarMax = 130;
     }
 }

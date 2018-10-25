@@ -34,7 +34,7 @@ public class AutoVolumeActivity extends AppCompatActivity {
         //초기화
         SaveValues.StateValues.micSensitivity = micSensitivitySeekBar.getProgress();
         SaveValues.StateValues.micLevel = micLevelSeekBar.getProgress();
-        noiseProgressBar.setMax(130 - sharedPreferences.getInt(SaveValues.Keys.micSensitivity, SaveValues.DefValues.micSensitivity));
+        noiseProgressBar.setMax(SaveValues.DefValues.noiseProgressBarMax - sharedPreferences.getInt(SaveValues.Keys.micSensitivity, SaveValues.DefValues.micSensitivity));
 
         if (!MeasuringSoundThread.isRunning)
             new MeasuringSoundThread().start();
@@ -132,7 +132,7 @@ public class AutoVolumeActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 editor.putInt(SaveValues.Keys.micSensitivity, progress);
                 editor.apply();
-                noiseProgressBar.setMax(130 - progress);
+                noiseProgressBar.setMax(SaveValues.DefValues.noiseProgressBarMax - progress);
                 SaveValues.StateValues.micSensitivity = micSensitivitySeekBar.getProgress();
             }
 
