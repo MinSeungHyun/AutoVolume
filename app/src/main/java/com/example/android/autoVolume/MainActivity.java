@@ -35,7 +35,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Objects;
 
-public class ActivityMain extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
     //etc
     long time = 0;
     //view
@@ -93,24 +93,24 @@ public class ActivityMain extends AppCompatActivity {
     }
 
     /**
-     * EventMinMaxValue 를 받아서 볼륨 범위 텍스트를 변경 from ActivityRangePopup
+     * MinMaxValueEvent 를 받아서 볼륨 범위 텍스트를 변경 from RangePopupActivity
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void changeTV(EventMinMaxValue event) {
+    public void changeTV(MinMaxValueEvent event) {
         switch (event.keyName) {
-            case SaveKey.ringtone:
+            case SaveValues.Keys.ringtone:
                 minRingtone.setText(String.format(getString(R.string.min_volume), event.minValue));
                 maxRingtone.setText(String.format(getString(R.string.max_volume), event.maxValue));
                 break;
-            case SaveKey.media:
+            case SaveValues.Keys.media:
                 minMedia.setText(String.format(getString(R.string.min_volume), event.minValue));
                 maxMedia.setText(String.format(getString(R.string.max_volume), event.maxValue));
                 break;
-            case SaveKey.notifications:
+            case SaveValues.Keys.notifications:
                 minNotifications.setText(String.format(getString(R.string.min_volume), event.minValue));
                 maxNotifications.setText(String.format(getString(R.string.max_volume), event.maxValue));
                 break;
-            case SaveKey.alarm:
+            case SaveValues.Keys.alarm:
                 minAlarm.setText(String.format(getString(R.string.min_volume), event.minValue));
                 maxAlarm.setText(String.format(getString(R.string.max_volume), event.maxValue));
                 break;
@@ -160,8 +160,8 @@ public class ActivityMain extends AppCompatActivity {
     @SuppressLint("CommitPrefEdits")
     private void getReferences() {
         //switchPreference 참조 생성
-        switchPreference = getSharedPreferences(SaveKey.switchPreferenceKey, MODE_PRIVATE);
-        volumeRangePreference = getSharedPreferences(SaveKey.rangePreferenceKey, MODE_PRIVATE);
+        switchPreference = getSharedPreferences(SaveValues.Keys.switchPreference, MODE_PRIVATE);
+        volumeRangePreference = getSharedPreferences(SaveValues.Keys.rangePreference, MODE_PRIVATE);
         switchPreferenceEditor = switchPreference.edit();
 
         //audioManager
@@ -172,21 +172,21 @@ public class ActivityMain extends AppCompatActivity {
      * 저장되었던 스위치 상태를 가져오는 메소드
      */
     private void reloadSwitchState() {
-        Boolean isChecked = switchPreference.getBoolean(String.valueOf(mainSwitch.getTag()), false);
-        Boolean isChecked_1 = switchPreference.getBoolean(SaveKey.ringtoneStateKey, false);
-        Boolean isChecked_2 = switchPreference.getBoolean(SaveKey.mediaStateKey, false);
-        Boolean isChecked_3 = switchPreference.getBoolean(SaveKey.notificationsStateKey, false);
-        Boolean isChecked_4 = switchPreference.getBoolean(SaveKey.alarmStateKey, false);
+        Boolean isChecked = switchPreference.getBoolean(SaveValues.Keys.autoVolumeState, SaveValues.DefValues.autoVolume);
+        Boolean isChecked_1 = switchPreference.getBoolean(SaveValues.Keys.ringtoneState, SaveValues.DefValues.ringtone);
+        Boolean isChecked_2 = switchPreference.getBoolean(SaveValues.Keys.mediaState, SaveValues.DefValues.media);
+        Boolean isChecked_3 = switchPreference.getBoolean(SaveValues.Keys.notificationsState, SaveValues.DefValues.notifications);
+        Boolean isChecked_4 = switchPreference.getBoolean(SaveValues.Keys.alarmState, SaveValues.DefValues.alarm);
 
         mainSwitch.setChecked(isChecked);
         setIconTV(imageView_1, textView_1, isChecked_1);
         setIconTV(imageView_2, textView_2, isChecked_2);
         setIconTV(imageView_3, textView_3, isChecked_3);
         setIconTV(imageView_4, textView_4, isChecked_4);
-        SaveValues.isRingtoneOn = isChecked_1;
-        SaveValues.isMediaOn = isChecked_2;
-        SaveValues.isNotificationsOn = isChecked_3;
-        SaveValues.isAlarmOn = isChecked_4;
+        SaveValues.StateValues.isRingtoneOn = isChecked_1;
+        SaveValues.StateValues.isMediaOn = isChecked_2;
+        SaveValues.StateValues.isNotificationsOn = isChecked_3;
+        SaveValues.StateValues.isAlarmOn = isChecked_4;
 
     }
 
@@ -194,14 +194,14 @@ public class ActivityMain extends AppCompatActivity {
      * 저장되었던 최소/최대 볼륨을 가져오는 메소드
      */
     private void reloadTextState() {
-        int sMinRingtone = volumeRangePreference.getInt(SaveKey.ringtoneMinKey, 0);
-        int sMaxRingtone = volumeRangePreference.getInt(SaveKey.ringtoneMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
-        int sMinMedia = volumeRangePreference.getInt(SaveKey.mediaMinKey, 0);
-        int sMaxMedia = volumeRangePreference.getInt(SaveKey.mediaMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
-        int sMinNotifications = volumeRangePreference.getInt(SaveKey.notificationsMinKey, 0);
-        int sMaxNotifications = volumeRangePreference.getInt(SaveKey.notificationsMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION));
-        int sMinAlarm = volumeRangePreference.getInt(SaveKey.alarmMinKey, 0);
-        int sMaxAlarm = volumeRangePreference.getInt(SaveKey.alarmMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
+        int sMinRingtone = volumeRangePreference.getInt(SaveValues.Keys.ringtoneMin, 0);
+        int sMaxRingtone = volumeRangePreference.getInt(SaveValues.Keys.ringtoneMax, audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
+        int sMinMedia = volumeRangePreference.getInt(SaveValues.Keys.mediaMin, 0);
+        int sMaxMedia = volumeRangePreference.getInt(SaveValues.Keys.mediaMax, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+        int sMinNotifications = volumeRangePreference.getInt(SaveValues.Keys.notificationsMin, 0);
+        int sMaxNotifications = volumeRangePreference.getInt(SaveValues.Keys.notificationsMax, audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION));
+        int sMinAlarm = volumeRangePreference.getInt(SaveValues.Keys.alarmMin, 0);
+        int sMaxAlarm = volumeRangePreference.getInt(SaveValues.Keys.alarmMax, audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
 
         minRingtone.setText(String.format(getString(R.string.min_volume), sMinRingtone));
         maxRingtone.setText(String.format(getString(R.string.max_volume), sMaxRingtone));
@@ -220,15 +220,14 @@ public class ActivityMain extends AppCompatActivity {
         mainSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                String switchTag = String.valueOf(mainSwitch.getTag());
-                switchPreferenceEditor.putBoolean(switchTag, isChecked);
+                switchPreferenceEditor.putBoolean(SaveValues.Keys.autoVolumeState, isChecked);
                 switchPreferenceEditor.commit();
                 if (isChecked) {
                     //권한 허용 여부 확인하고 거부되었으면 팝업 띄움
-                    Boolean permissionGranted = ContextCompat.checkSelfPermission(ActivityMain.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+                    Boolean permissionGranted = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
                     if (!permissionGranted) {
                         //권한 거부됨
-                        new AlertDialog.Builder(ActivityMain.this)
+                        new AlertDialog.Builder(MainActivity.this)
                                 .setTitle(getString(R.string.notice))
                                 .setMessage(getString(R.string.permission_denied_message))
                                 .setNeutralButton(getString(R.string.setting), new DialogInterface.OnClickListener() {
@@ -249,22 +248,22 @@ public class ActivityMain extends AppCompatActivity {
                                 .show();
                         //스위치 체크된것 취소
                         mainSwitch.setChecked(false);
-                        switchPreferenceEditor.putBoolean(String.valueOf(mainSwitch.getTag()), false);
+                        switchPreferenceEditor.putBoolean(SaveValues.Keys.autoVolumeState, false);
                         switchPreferenceEditor.commit();
                     } else {
                         //권한 허용됨, 활성화
                         setEnableByMainSwitch();
                         //서비스 시작
-                        Intent service = new Intent(ActivityMain.this, ServiceAutoVolume.class);
+                        Intent service = new Intent(MainActivity.this, AutoVolumeService.class);
                         startService(service);
-                        SaveValues.isAutoVolumeOn = true;
+                        SaveValues.StateValues.isAutoVolumeOn = true;
                     }
                 } else {
                     //비활성화
                     setDisableByMainSwitch();
                     //서비스 종료
-                    SaveValues.isAutoVolumeOn = false;
-                    Intent service = new Intent(ActivityMain.this, ServiceAutoVolume.class);
+                    SaveValues.StateValues.isAutoVolumeOn = false;
+                    Intent service = new Intent(MainActivity.this, AutoVolumeService.class);
                     stopService(service);
                 }
             }
@@ -273,7 +272,7 @@ public class ActivityMain extends AppCompatActivity {
         topLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ActivityMain.this, ActivityAutoVolume.class);
+                Intent intent = new Intent(MainActivity.this, AutoVolumeActivity.class);
                 startActivity(intent);
             }
         });
@@ -284,54 +283,54 @@ public class ActivityMain extends AppCompatActivity {
                 if (mainSwitch.isChecked()) {
                     switch (view.getId()) {
                         case R.id.linearLayout_1:
-                            if (SaveValues.isRingtoneOn) {
-                                switchPreferenceEditor.putBoolean(SaveKey.ringtoneStateKey, false);
+                            if (SaveValues.StateValues.isRingtoneOn) {
+                                switchPreferenceEditor.putBoolean(SaveValues.Keys.ringtoneState, false);
                                 switchPreferenceEditor.apply();
-                                SaveValues.isRingtoneOn = false;
+                                SaveValues.StateValues.isRingtoneOn = false;
                                 setIconTV(imageView_1, textView_1, false);
                             } else {
-                                switchPreferenceEditor.putBoolean(SaveKey.ringtoneStateKey, true);
+                                switchPreferenceEditor.putBoolean(SaveValues.Keys.ringtoneState, true);
                                 switchPreferenceEditor.apply();
-                                SaveValues.isRingtoneOn = true;
+                                SaveValues.StateValues.isRingtoneOn = true;
                                 setIconTV(imageView_1, textView_1, true);
                             }
                             break;
                         case R.id.linearLayout_2:
-                            if (SaveValues.isMediaOn) {
-                                switchPreferenceEditor.putBoolean(SaveKey.mediaStateKey, false);
+                            if (SaveValues.StateValues.isMediaOn) {
+                                switchPreferenceEditor.putBoolean(SaveValues.Keys.mediaState, false);
                                 switchPreferenceEditor.apply();
-                                SaveValues.isMediaOn = false;
+                                SaveValues.StateValues.isMediaOn = false;
                                 setIconTV(imageView_2, textView_2, false);
                             } else {
-                                switchPreferenceEditor.putBoolean(SaveKey.mediaStateKey, true);
+                                switchPreferenceEditor.putBoolean(SaveValues.Keys.mediaState, true);
                                 switchPreferenceEditor.apply();
-                                SaveValues.isMediaOn = true;
+                                SaveValues.StateValues.isMediaOn = true;
                                 setIconTV(imageView_2, textView_2, true);
                             }
                             break;
                         case R.id.linearLayout_3:
-                            if (SaveValues.isNotificationsOn) {
-                                switchPreferenceEditor.putBoolean(SaveKey.notificationsStateKey, false);
+                            if (SaveValues.StateValues.isNotificationsOn) {
+                                switchPreferenceEditor.putBoolean(SaveValues.Keys.notificationsState, false);
                                 switchPreferenceEditor.apply();
-                                SaveValues.isNotificationsOn = false;
+                                SaveValues.StateValues.isNotificationsOn = false;
                                 setIconTV(imageView_3, textView_3, false);
                             } else {
-                                switchPreferenceEditor.putBoolean(SaveKey.notificationsStateKey, true);
+                                switchPreferenceEditor.putBoolean(SaveValues.Keys.notificationsState, true);
                                 switchPreferenceEditor.apply();
-                                SaveValues.isNotificationsOn = true;
+                                SaveValues.StateValues.isNotificationsOn = true;
                                 setIconTV(imageView_3, textView_3, true);
                             }
                             break;
                         case R.id.linearLayout_4:
-                            if (SaveValues.isAlarmOn) {
-                                switchPreferenceEditor.putBoolean(SaveKey.alarmStateKey, false);
+                            if (SaveValues.StateValues.isAlarmOn) {
+                                switchPreferenceEditor.putBoolean(SaveValues.Keys.alarmState, false);
                                 switchPreferenceEditor.apply();
-                                SaveValues.isAlarmOn = false;
+                                SaveValues.StateValues.isAlarmOn = false;
                                 setIconTV(imageView_4, textView_4, false);
                             } else {
-                                switchPreferenceEditor.putBoolean(SaveKey.alarmStateKey, true);
+                                switchPreferenceEditor.putBoolean(SaveValues.Keys.alarmState, true);
                                 switchPreferenceEditor.apply();
-                                SaveValues.isAlarmOn = true;
+                                SaveValues.StateValues.isAlarmOn = true;
                                 setIconTV(imageView_4, textView_4, true);
                             }
                             break;
@@ -358,19 +357,19 @@ public class ActivityMain extends AppCompatActivity {
         LinearLayout.OnClickListener rangeLinearLayoutClickListener = new LinearLayout.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ActivityMain.this, ActivityRangePopup.class);
+                Intent intent = new Intent(MainActivity.this, RangePopupActivity.class);
                 switch (view.getId()) {
                     case R.id.range_linearLayout_1:
-                        intent.putExtra(SaveKey.viewName, SaveKey.ringtone);
+                        intent.putExtra(SaveValues.Keys.viewName, SaveValues.Keys.ringtone);
                         break;
                     case R.id.range_linearLayout_2:
-                        intent.putExtra(SaveKey.viewName, SaveKey.media);
+                        intent.putExtra(SaveValues.Keys.viewName, SaveValues.Keys.media);
                         break;
                     case R.id.range_linearLayout_3:
-                        intent.putExtra(SaveKey.viewName, SaveKey.notifications);
+                        intent.putExtra(SaveValues.Keys.viewName, SaveValues.Keys.notifications);
                         break;
                     case R.id.range_linearLayout_4:
-                        intent.putExtra(SaveKey.viewName, SaveKey.alarm);
+                        intent.putExtra(SaveValues.Keys.viewName, SaveValues.Keys.alarm);
                         break;
                 }
                 startActivity(intent);
@@ -429,7 +428,7 @@ public class ActivityMain extends AppCompatActivity {
     private boolean isServiceRunning() {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (ServiceAutoVolume.class.getName().equals(service.service.getClassName())) {
+            if (AutoVolumeService.class.getName().equals(service.service.getClassName())) {
                 return true;
             }
         }
@@ -467,7 +466,7 @@ public class ActivityMain extends AppCompatActivity {
                     @Override
                     public void run() {
                         //여기에 딜레이 후 시작할 작업들을 입력
-                        ActivityCompat.requestPermissions(ActivityMain.this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
                     }
                 }, 2000);
             }

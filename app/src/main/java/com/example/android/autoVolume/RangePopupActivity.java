@@ -17,7 +17,7 @@ import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 
 import org.greenrobot.eventbus.EventBus;
 
-public class ActivityRangePopup extends Activity {
+public class RangePopupActivity extends Activity {
     //views
     CrystalRangeSeekbar rangeSeekBar;
     TextView topTextView, leftText, rightText;
@@ -59,37 +59,37 @@ public class ActivityRangePopup extends Activity {
 
         //클릭된 뷰를 받아와서 각종 변수 설정
         Intent intent = getIntent();
-        viewName = intent.getStringExtra(SaveKey.viewName);
+        viewName = intent.getStringExtra(SaveValues.Keys.viewName);
 
         switch (viewName) {
-            case SaveKey.ringtone:
+            case SaveValues.Keys.ringtone:
                 audioType = AudioManager.STREAM_RING;
                 audioName = getString(R.string.ringtone);
-                minKeyName = SaveKey.ringtoneMinKey;
-                maxKeyName = SaveKey.ringtoneMaxKey;
+                minKeyName = SaveValues.Keys.ringtoneMin;
+                maxKeyName = SaveValues.Keys.ringtoneMax;
                 break;
-            case SaveKey.media:
+            case SaveValues.Keys.media:
                 audioType = AudioManager.STREAM_MUSIC;
                 audioName = getString(R.string.media);
-                minKeyName = SaveKey.mediaMinKey;
-                maxKeyName = SaveKey.mediaMaxKey;
+                minKeyName = SaveValues.Keys.mediaMin;
+                maxKeyName = SaveValues.Keys.mediaMax;
                 break;
-            case SaveKey.notifications:
+            case SaveValues.Keys.notifications:
                 audioType = AudioManager.STREAM_NOTIFICATION;
                 audioName = getString(R.string.notifications);
-                minKeyName = SaveKey.notificationsMinKey;
-                maxKeyName = SaveKey.notificationsMaxKey;
+                minKeyName = SaveValues.Keys.notificationsMin;
+                maxKeyName = SaveValues.Keys.notificationsMax;
                 break;
-            case SaveKey.alarm:
+            case SaveValues.Keys.alarm:
                 audioType = AudioManager.STREAM_ALARM;
                 audioName = getString(R.string.alarm);
-                minKeyName = SaveKey.alarmMinKey;
-                maxKeyName = SaveKey.alarmMaxKey;
+                minKeyName = SaveValues.Keys.alarmMin;
+                maxKeyName = SaveValues.Keys.alarmMax;
                 break;
         }
 
         //sharedPreferences 설정
-        sharedPreferences = getSharedPreferences(SaveKey.rangePreferenceKey, 0);
+        sharedPreferences = getSharedPreferences(SaveValues.Keys.rangePreference, MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
         //저장된 값 설정, 초기 설정
@@ -114,8 +114,8 @@ public class ActivityRangePopup extends Activity {
                 leftText.setText(String.valueOf(minValue));
                 rightText.setText(String.valueOf(maxValue));
 
-                //이벤트버스로 변경된값 전달 to ActivityMain, ServiceAutoVolume
-                EventBus.getDefault().post(new EventMinMaxValue(viewName, minValue.intValue(), maxValue.intValue()));
+                //이벤트버스로 변경된값 전달 to MainActivity, AutoVolumeService
+                EventBus.getDefault().post(new MinMaxValueEvent(viewName, minValue.intValue(), maxValue.intValue()));
             }
         });
     }

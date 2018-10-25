@@ -22,7 +22,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Objects;
 
-public class ServiceAutoVolume extends Service {
+public class AutoVolumeService extends Service {
     static boolean isRunning;
     private AudioManager audioManager;
     private Notification.Builder builder;
@@ -49,47 +49,47 @@ public class ServiceAutoVolume extends Service {
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         //초기값 설정
-        SharedPreferences autoVolumePreferences = getSharedPreferences(SaveKey.autoVolumePreferenceKey, MODE_PRIVATE);
-        SaveValues.micLevel = autoVolumePreferences.getInt(SaveKey.micLevelKey, 100);
-        SaveValues.micSensitivity = autoVolumePreferences.getInt(SaveKey.micSensitivityKey, 50);
-        SaveValues.changeInterval = autoVolumePreferences.getInt(SaveKey.intervalKey, 6) * 5;
-        if (SaveValues.changeInterval < 1) SaveValues.changeInterval = 1;
+        SharedPreferences autoVolumePreferences = getSharedPreferences(SaveValues.Keys.autoVolumePreference, MODE_PRIVATE);
+        SaveValues.StateValues.micLevel = autoVolumePreferences.getInt(SaveValues.Keys.micLevel, SaveValues.DefValues.micLevel);
+        SaveValues.StateValues.micSensitivity = autoVolumePreferences.getInt(SaveValues.Keys.micSensitivity, SaveValues.DefValues.micSensitivity);
+        SaveValues.StateValues.changeInterval = autoVolumePreferences.getInt(SaveValues.Keys.interval, SaveValues.DefValues.changeInterval) * 5;
+        if (SaveValues.StateValues.changeInterval < 1) SaveValues.StateValues.changeInterval = 1;
 
-        SharedPreferences rangePreference = getSharedPreferences(SaveKey.rangePreferenceKey, MODE_PRIVATE);
-        ringtoneMin = rangePreference.getInt(SaveKey.ringtoneMinKey, 0);
-        ringtoneMax = rangePreference.getInt(SaveKey.ringtoneMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
-        mediaMin = rangePreference.getInt(SaveKey.mediaMinKey, 0);
-        mediaMax = rangePreference.getInt(SaveKey.mediaMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
-        notificationsMin = rangePreference.getInt(SaveKey.notificationsMinKey, 0);
-        notificationsMax = rangePreference.getInt(SaveKey.notificationsMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION));
-        alarmMin = rangePreference.getInt(SaveKey.alarmMinKey, 0);
-        alarmMax = rangePreference.getInt(SaveKey.alarmMaxKey, audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
+        SharedPreferences rangePreference = getSharedPreferences(SaveValues.Keys.rangePreference, MODE_PRIVATE);
+        ringtoneMin = rangePreference.getInt(SaveValues.Keys.ringtoneMin, 0);
+        ringtoneMax = rangePreference.getInt(SaveValues.Keys.ringtoneMax, audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
+        mediaMin = rangePreference.getInt(SaveValues.Keys.mediaMin, 0);
+        mediaMax = rangePreference.getInt(SaveValues.Keys.mediaMax, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+        notificationsMin = rangePreference.getInt(SaveValues.Keys.notificationsMin, 0);
+        notificationsMax = rangePreference.getInt(SaveValues.Keys.notificationsMax, audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION));
+        alarmMin = rangePreference.getInt(SaveValues.Keys.alarmMin, 0);
+        alarmMax = rangePreference.getInt(SaveValues.Keys.alarmMax, audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
 
         isToastShowing = false;
         isRunning = true;
-        if (!ThreadMeasuringSound.isRunning) new ThreadMeasuringSound().start();
+        if (!MeasuringSoundThread.isRunning) new MeasuringSoundThread().start();
         new CalculatingThread().start();
     }
 
     /**
-     * EventMinMaxValue 를 받아서 볼륨 범위를 변경 from ActivityRangePopup
+     * MinMaxValueEvent 를 받아서 볼륨 범위를 변경 from RangePopupActivity
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void changeMinMax(EventMinMaxValue event) {
+    public void changeMinMax(MinMaxValueEvent event) {
         switch (event.keyName) {
-            case SaveKey.ringtone:
+            case SaveValues.Keys.ringtone:
                 ringtoneMin = event.minValue;
                 ringtoneMax = event.maxValue;
                 break;
-            case SaveKey.media:
+            case SaveValues.Keys.media:
                 mediaMin = event.minValue;
                 mediaMax = event.maxValue;
                 break;
-            case SaveKey.notifications:
+            case SaveValues.Keys.notifications:
                 notificationsMin = event.minValue;
                 notificationsMax = event.maxValue;
                 break;
-            case SaveKey.alarm:
+            case SaveValues.Keys.alarm:
                 alarmMin = event.minValue;
                 alarmMax = event.maxValue;
                 break;
@@ -103,7 +103,7 @@ public class ServiceAutoVolume extends Service {
     public void onDestroy() {
         isRunning = false;
         EventBus.getDefault().unregister(this); //EventBus unregister
-        if (!ActivityAutoVolume.isRunning) new ThreadMeasuringSound().interrupt();
+        if (!AutoVolumeActivity.isRunning) new MeasuringSoundThread().interrupt();
     }
 
     /**
@@ -111,7 +111,7 @@ public class ServiceAutoVolume extends Service {
      */
     private int getVolume(int value) {
         //마이크 감도에따라 값 조절
-        int progressMax = 130 - SaveValues.micSensitivity;
+        int progressMax = 130 - SaveValues.StateValues.micSensitivity;
         float ratio = (float) value / progressMax;
         //볼륨 범위에 따라 값 조절
         int minVolume = ringtoneMin;
@@ -142,19 +142,19 @@ public class ServiceAutoVolume extends Service {
         //SDK 가 26이상이면 channel 설정, 아니면 일반 설정
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder = new Notification.Builder(ServiceAutoVolume.this, "notification");
+            builder = new Notification.Builder(AutoVolumeService.this, "notification");
 
             NotificationChannel notificationChannel = new NotificationChannel("notification", getString(R.string.app_name), NotificationManager.IMPORTANCE_MIN);
             notificationChannel.setShowBadge(false);
             Objects.requireNonNull(notificationManager).createNotificationChannel(notificationChannel);
         } else {
-            builder = new Notification.Builder(ServiceAutoVolume.this);
+            builder = new Notification.Builder(AutoVolumeService.this);
         }
 
         //알림 클릭시 나올 액티비티
-        PendingIntent pendingIntent = PendingIntent.getActivity(ServiceAutoVolume.this,
+        PendingIntent pendingIntent = PendingIntent.getActivity(AutoVolumeService.this,
                 0,
-                new Intent(getApplicationContext(), ActivityMain.class),
+                new Intent(getApplicationContext(), MainActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         //builder 설정
@@ -172,7 +172,7 @@ public class ServiceAutoVolume extends Service {
         public void run() {
             int time = 1;
             int sum = 0;
-            while (SaveValues.isAutoVolumeOn) {
+            while (SaveValues.StateValues.isAutoVolumeOn) {
                 //볼륨이 음소거 되있을때 실행되는것 방지
                 if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT) {
                     if (!isToastShowing) {
@@ -180,18 +180,19 @@ public class ServiceAutoVolume extends Service {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(ServiceAutoVolume.this, getString(R.string.app_name) + ": " + getString(R.string.turn_off_mute), Toast.LENGTH_LONG).show();
+                                Toast.makeText(AutoVolumeService.this, getString(R.string.app_name) + ": " + getString(R.string.turn_off_mute), Toast.LENGTH_LONG).show();
                             }
                         });
                         isToastShowing = true;
                     }
                 } else {
                     isToastShowing = false;
-                    int decibel = ThreadMeasuringSound.decibel;
-                    decibel += (SaveValues.micLevel - 100); //마이크 수준에따라 값 조절
+                    int decibel = MeasuringSoundThread.decibel;
+                    decibel += (SaveValues.StateValues.micLevel - 100); //마이크 수준에따라 값 조절
 
+                    //볼륨 평균 계산
                     time++;
-                    if (time < SaveValues.changeInterval) {
+                    if (time < SaveValues.StateValues.changeInterval) {
                         sum += getVolume(decibel);
                     } else {
                         sum += getVolume(decibel);

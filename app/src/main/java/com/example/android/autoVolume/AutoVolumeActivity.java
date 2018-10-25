@@ -12,7 +12,7 @@ import android.widget.TextView;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class ActivityAutoVolume extends AppCompatActivity {
+public class AutoVolumeActivity extends AppCompatActivity {
     static boolean isRunning = false;
     private ProgressBar noiseProgressBar;
     private SeekBar micLevelSeekBar, micSensitivitySeekBar, intervalSeekBar;
@@ -32,12 +32,12 @@ public class ActivityAutoVolume extends AppCompatActivity {
         setListener();
 
         //초기화
-        SaveValues.micSensitivity = micSensitivitySeekBar.getProgress();
-        SaveValues.micLevel = micLevelSeekBar.getProgress();
-        noiseProgressBar.setMax(130 - sharedPreferences.getInt(SaveKey.micSensitivityKey, 50));
+        SaveValues.StateValues.micSensitivity = micSensitivitySeekBar.getProgress();
+        SaveValues.StateValues.micLevel = micLevelSeekBar.getProgress();
+        noiseProgressBar.setMax(130 - sharedPreferences.getInt(SaveValues.Keys.micSensitivity, SaveValues.DefValues.micSensitivity));
 
-        if (!ThreadMeasuringSound.isRunning)
-            new ThreadMeasuringSound().start();
+        if (!MeasuringSoundThread.isRunning)
+            new MeasuringSoundThread().start();
         new ChangeProgressBarThread().start();
     }
 
@@ -48,7 +48,7 @@ public class ActivityAutoVolume extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         isRunning = false;
-        if (!ServiceAutoVolume.isRunning) new ThreadMeasuringSound().interrupt();
+        if (!AutoVolumeService.isRunning) new MeasuringSoundThread().interrupt();
     }
 
     /**
@@ -64,7 +64,7 @@ public class ActivityAutoVolume extends AppCompatActivity {
         intervalTextView = findViewById(R.id.intervalTV);
 
         //sharedPreferences 참조
-        sharedPreferences = getSharedPreferences(SaveKey.autoVolumePreferenceKey, MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(SaveValues.Keys.autoVolumePreference, MODE_PRIVATE);
         editor = sharedPreferences.edit();
     }
 
@@ -73,10 +73,10 @@ public class ActivityAutoVolume extends AppCompatActivity {
      */
     private void reloadStates() {
         //저장했던 값 불러오기
-        micLevelSeekBar.setProgress(sharedPreferences.getInt(SaveKey.micLevelKey, 70));
-        micSensitivitySeekBar.setProgress(sharedPreferences.getInt(SaveKey.micSensitivityKey, 50));
+        micLevelSeekBar.setProgress(sharedPreferences.getInt(SaveValues.Keys.micLevel, SaveValues.DefValues.micLevel));
+        micSensitivitySeekBar.setProgress(sharedPreferences.getInt(SaveValues.Keys.micSensitivity, SaveValues.DefValues.micSensitivity));
 
-        int progressValue = sharedPreferences.getInt(SaveKey.intervalKey, 6);
+        int progressValue = sharedPreferences.getInt(SaveValues.Keys.interval, SaveValues.DefValues.changeInterval);
         intervalSeekBar.setProgress(progressValue);
         progressValue *= 5;
 
@@ -112,9 +112,9 @@ public class ActivityAutoVolume extends AppCompatActivity {
         micLevelSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                editor.putInt(SaveKey.micLevelKey, progress);
+                editor.putInt(SaveValues.Keys.micLevel, progress);
                 editor.apply();
-                SaveValues.micLevel = progress;
+                SaveValues.StateValues.micLevel = progress;
             }
 
             @Override
@@ -130,10 +130,10 @@ public class ActivityAutoVolume extends AppCompatActivity {
         micSensitivitySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                editor.putInt(SaveKey.micSensitivityKey, progress);
+                editor.putInt(SaveValues.Keys.micSensitivity, progress);
                 editor.apply();
                 noiseProgressBar.setMax(130 - progress);
-                SaveValues.micSensitivity = micSensitivitySeekBar.getProgress();
+                SaveValues.StateValues.micSensitivity = micSensitivitySeekBar.getProgress();
             }
 
             @Override
@@ -149,11 +149,11 @@ public class ActivityAutoVolume extends AppCompatActivity {
         intervalSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                editor.putInt(SaveKey.intervalKey, progress);
+                editor.putInt(SaveValues.Keys.interval, progress);
                 editor.apply();
                 progress *= 5;
                 if (progress < 1) progress = 1;
-                SaveValues.changeInterval = progress;
+                SaveValues.StateValues.changeInterval = progress;
 
                 long minute = TimeUnit.SECONDS.toMinutes(progress);
                 long second = progress - TimeUnit.SECONDS.toMinutes(progress) * 60;
@@ -203,7 +203,7 @@ public class ActivityAutoVolume extends AppCompatActivity {
         @Override
         public void run() {
             while (isRunning) {
-                int decibel = ThreadMeasuringSound.decibel;
+                int decibel = MeasuringSoundThread.decibel;
                 decibel += (micLevelSeekBar.getProgress() - 100);
                 noiseProgressBar.setProgress(decibel);
 
