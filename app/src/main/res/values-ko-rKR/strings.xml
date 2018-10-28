@@ -1,13 +1,12 @@
 <resources>
-    <string name="app_name">Auto Volume</string>
-    <string name="auto_volume">자동 볼륨</string>
+    <string name="app_name">자동 볼륨</string>
     <string name="ringtone">벨소리</string>
     <string name="media">미디어</string>
     <string name="notifications">알림</string>
     <string name="alarm">알람</string>
     <string name="current_noise">현재 소음</string>
     <string name="mic_sensitive">마이크 감도</string>
-    <string name="mic_level">마이크 수준</string>
+    <string name="mic_level">마이크 볼륨</string>
     <string name="change"><u>변경</u></string>
     <string name="volume_interval">볼륨 조절 간격</string>
     <string name="low">낮음</string>
@@ -25,7 +24,4 @@
     <string name="cancel">취소</string>
     <string name="permission_denied_message">마이크 권한이 거부되었습니다. 주변의 소음을 측정하기 위해 마이크권한을 직접 허용하셔야 합니다.</string>
     <string name="permission_denied_toast">주변의 소음을 측정하기 위해 마이크권한을 허용하셔야 합니다.</string>
-
-    <string name="virtual_min">"최소 볼륨: "</string>
-    <string name="virtual_max">"최대 볼륨: "</string>
 </resources>

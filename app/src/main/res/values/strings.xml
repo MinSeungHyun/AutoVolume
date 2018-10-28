@@ -1,21 +1,20 @@
 <resources>
     <string name="app_name">Auto Volume</string>
-    <string name="auto_volume">Auto volume</string>
     <string name="ringtone">Ringtone</string>
     <string name="media">Media</string>
     <string name="notifications">Notifications</string>
     <string name="alarm">Alarm</string>
-    <string name="current_noise">Current noise</string>
-    <string name="mic_sensitive">Mic sensitivity</string>
-    <string name="mic_level">Mic level</string>
+    <string name="current_noise">Current Noise</string>
+    <string name="mic_sensitive">Mic Sensitivity</string>
+    <string name="mic_level">Mic Volume</string>
     <string name="change"><u>change</u></string>
-    <string name="volume_interval">Volume adjustment interval</string>
+    <string name="volume_interval">Volume Adjustment Interval</string>
     <string name="low">low</string>
     <string name="high">high</string>
     <string name="volume_range">volume adjustment range</string>
     <string name="backButton_twice">Press the Back button again to exit.</string>
-    <string name="min_volume">Min volume: %d</string>
-    <string name="max_volume">Max volume: %d</string>
+    <string name="min_volume">Min Volume: %d</string>
+    <string name="max_volume">Max Volume: %d</string>
     <string name="notification_content">Auto volume is on.</string>
     <string name="minute">minute</string>
     <string name="second">second</string>
@@ -25,7 +24,4 @@
     <string name="cancel">Cancel</string>
     <string name="permission_denied_message">Mic Permission denied. You need to allow the Mic Permission directly to measure noise around.</string>
     <string name="permission_denied_toast">You need to allow the Mic Permission to measure noise around.</string>
-
-    <string name="virtual_min">"Min volume: "</string>
-    <string name="virtual_max">"Max volume: "</string>
 </resources>
