@@ -40,11 +40,11 @@ class SaveValues {
         static int micSensitivity;
         static int changeInterval;
 
+        static boolean isAutoVolumeOn;
         static boolean isRingtoneOn;
         static boolean isMediaOn;
         static boolean isNotificationsOn;
         static boolean isAlarmOn;
-        static boolean isAutoVolumeOn;
     }
 
     static final class DefValues {
