@@ -36,6 +36,13 @@ public class AutoVolumeService extends Service {
         return null;
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        startForeground(1, builder.build());
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
     /**
      * 서비스가 최초 시작될때 호출
      */
@@ -45,7 +52,6 @@ public class AutoVolumeService extends Service {
         EventBus.getDefault().register(this); //EventBus register
 
         setNotification();
-        startForeground(1, builder.build());
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
@@ -198,8 +204,7 @@ public class AutoVolumeService extends Service {
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         //builder 설정
-        builder.setSmallIcon(R.drawable.ic_baseline_feedback_24px)
-                .setContentTitle(getString(R.string.app_name))
+        builder.setSmallIcon(R.drawable.notification_icon)
                 .setContentText(getString(R.string.notification_content))
                 .setContentIntent(pendingIntent);
     }
