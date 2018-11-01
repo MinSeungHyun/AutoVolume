@@ -53,7 +53,7 @@ public class RangePopupActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.range_popup);
+        setContentView(R.layout.activity_range_popup);
 
         //디스플레이 해상도를 가져와서 크기를 조절
         Display display = getWindowManager().getDefaultDisplay();

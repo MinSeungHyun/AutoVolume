@@ -41,7 +41,6 @@ public class MeasuringSoundThread extends Thread {
             }
         }
         mediaRecorder.release();
-//        mediaRecorder = null;
     }
 
     @Override

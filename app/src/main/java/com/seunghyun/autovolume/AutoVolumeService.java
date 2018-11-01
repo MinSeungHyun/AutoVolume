@@ -203,10 +203,18 @@ public class AutoVolumeService extends Service {
                 new Intent(getApplicationContext(), MainActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        //builder 설정
+        //알림에서 버튼 클릭시 나올 액티비티
+        PendingIntent buttonIntent = PendingIntent.getActivity(AutoVolumeService.this,
+                1,
+                new Intent(getApplicationContext(), TurnOffActivity.class),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification.Action action = new Notification.Action(R.drawable.notification_icon, getString(R.string.turn_off), buttonIntent);
         builder.setSmallIcon(R.drawable.notification_icon)
+                .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.notification_content))
-                .setContentIntent(pendingIntent);
+                .setContentIntent(pendingIntent)
+                .addAction(action);
     }
 
     /**

@@ -29,7 +29,7 @@ class SaveValues {
         static final String alarm= "alarm";
 
         //AutoVolumeActivity
-        static final String autoVolumePreference = "auto_volume";
+        static final String autoVolumePreference = "activity_auto_volume";
         static final String micLevel = "mic_level";
         static final String micSensitivity = "mic_sensitivity";
         static final String interval = "interval";

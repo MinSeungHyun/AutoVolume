@@ -3,10 +3,13 @@ package com.seunghyun.autovolume;
 import android.Manifest;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -36,6 +39,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
+    static boolean isRunning = false;
     //etc
     long time = 0;
     //view
@@ -57,6 +61,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Objects.requireNonNull(getSupportActionBar()).hide(); //액션바 숨기기
         setContentView(R.layout.activity_main);
+
+        isRunning = true;
+        //from TurnOffActivity
+        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (action != null && action.equals("finish_activity")) finish();
+            }
+        };
+        registerReceiver(broadcastReceiver, new IntentFilter("finish_activity"));
 
         //권한 요청
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
@@ -89,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        isRunning = false;
         EventBus.getDefault().unregister(this); //EventBus unregister
     }
 

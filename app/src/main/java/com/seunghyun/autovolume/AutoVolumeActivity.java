@@ -24,7 +24,7 @@ public class AutoVolumeActivity extends AppCompatActivity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(R.string.app_name);
-        setContentView(R.layout.auto_volume);
+        setContentView(R.layout.activity_auto_volume);
         isRunning = true;
 
         getReferences();

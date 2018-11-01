@@ -24,4 +24,5 @@
     <string name="cancel">취소</string>
     <string name="permission_denied_message">마이크 권한이 거부되었습니다. 주변의 소음을 측정하기 위해 마이크권한을 직접 허용하셔야 합니다.</string>
     <string name="permission_denied_toast">주변의 소음을 측정하기 위해 마이크권한을 허용하셔야 합니다.</string>
+    <string name="turn_off">끄기</string>
 </resources>

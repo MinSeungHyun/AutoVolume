@@ -24,4 +24,5 @@
     <string name="cancel">Cancel</string>
     <string name="permission_denied_message">Mic Permission denied. You need to allow the Mic Permission directly to measure noise around.</string>
     <string name="permission_denied_toast">You need to allow the Mic Permission to measure noise around.</string>
+    <string name="turn_off">TURN OFF</string>
 </resources>
