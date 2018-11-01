@@ -20,7 +20,8 @@
     <string name="second">second</string>
     <string name="turn_off_mute">Turn off mute mode of the volume.</string>
     <string name="notice">Notice</string>
-    <string name="setting">Setting</string>
+    <string name="setting_capital">Setting</string>
+    <string name="setting">setting</string>
     <string name="cancel">Cancel</string>
     <string name="permission_denied_message">Mic Permission denied. You need to allow the Mic Permission directly to measure noise around.</string>
     <string name="permission_denied_toast">You need to allow the Mic Permission to measure noise around.</string>

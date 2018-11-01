@@ -20,6 +20,7 @@
     <string name="second">초</string>
     <string name="turn_off_mute">볼륨의 음소거모드를 해제해주세요.</string>
     <string name="notice">알림</string>
+    <string name="setting_capital">설정</string>
     <string name="setting">설정</string>
     <string name="cancel">취소</string>
     <string name="permission_denied_message">마이크 권한이 거부되었습니다. 주변의 소음을 측정하기 위해 마이크권한을 직접 허용하셔야 합니다.</string>

@@ -3,7 +3,6 @@ package com.seunghyun.autovolume;
 import android.Manifest;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -246,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
                         new AlertDialog.Builder(MainActivity.this)
                                 .setTitle(getString(R.string.notice))
                                 .setMessage(getString(R.string.permission_denied_message))
-                                .setNeutralButton(getString(R.string.setting), new DialogInterface.OnClickListener() {
+                                .setNeutralButton(getString(R.string.setting_capital), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
                                         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
