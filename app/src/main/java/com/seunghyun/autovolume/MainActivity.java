@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     static boolean isRunning = false;
     //etc
     long time = 0;
+    BroadcastReceiver broadcastReceiver;
     //view
     private TextView textView_1, textView_2, textView_3, textView_4,
             minRingtone, maxRingtone, minMedia, maxMedia, minNotifications, maxNotifications, minAlarm, maxAlarm;
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
         isRunning = true;
         //from TurnOffActivity
-        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
@@ -90,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         isRunning = false;
-        EventBus.getDefault().unregister(this); //EventBus unregister
+        EventBus.getDefault().unregister(this);
+        unregisterReceiver(broadcastReceiver);
     }
 
     /**

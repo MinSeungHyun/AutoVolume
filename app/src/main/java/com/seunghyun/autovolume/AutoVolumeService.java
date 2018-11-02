@@ -26,7 +26,8 @@ public class AutoVolumeService extends Service {
     static boolean isRunning;
     private AudioManager audioManager;
     private Notification.Builder builder;
-    private Boolean isToastShowing;
+    private Boolean isRingtoneToastShowing;
+    private Boolean isNotificationsToastShowing;
     private int ringtoneMin, ringtoneMax, mediaMin, mediaMax, notificationsMin, notificationsMax, alarmMin, alarmMax;
     private int[] sum = new int[4];
     private int[] volume = new int[4];
@@ -72,7 +73,8 @@ public class AutoVolumeService extends Service {
         alarmMin = rangePreference.getInt(SaveValues.Keys.alarmMin, 0);
         alarmMax = rangePreference.getInt(SaveValues.Keys.alarmMax, audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
 
-        isToastShowing = false;
+        isRingtoneToastShowing = false;
+        isNotificationsToastShowing = false;
         isRunning = true;
         if (!MeasuringSoundThread.isRunning) new MeasuringSoundThread().start();
         new CalculatingThread().start();
@@ -159,10 +161,10 @@ public class AutoVolumeService extends Service {
             if (volume[0] < 1) volume[0] = 1;
             //볼륨이 음소거되있을때 실행되는 것 방지
             if (audioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
-                isToastShowing = false;
+                isRingtoneToastShowing = false;
                 audioManager.setStreamVolume(AudioManager.STREAM_RING, volume[0], AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
             } else {
-                if (!isToastShowing) {
+                if (!isRingtoneToastShowing) {
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         @Override
@@ -170,18 +172,22 @@ public class AutoVolumeService extends Service {
                             Toast.makeText(AutoVolumeService.this, getString(R.string.app_name) + ": " + getString(R.string.turn_off_mute), Toast.LENGTH_LONG).show();
                         }
                     });
-                    isToastShowing = true;
+                    isRingtoneToastShowing = true;
                 }
             }
         }
         if (SaveValues.StateValues.isMediaOn) {
             if (volume[1] < 1) volume[1] = 1;
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume[1], AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+        }
+        if (SaveValues.StateValues.isNotificationsOn) {
+            if (volume[2] < 1) volume[2] = 1;
             //볼륨이 음소거되있을때 실행되는 것 방지
             if (audioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
-                isToastShowing = false;
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume[1], AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+                isNotificationsToastShowing = false;
+                audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, volume[2], AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
             } else {
-                if (!isToastShowing) {
+                if (!isNotificationsToastShowing) {
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         @Override
@@ -189,13 +195,9 @@ public class AutoVolumeService extends Service {
                             Toast.makeText(AutoVolumeService.this, getString(R.string.app_name) + ": " + getString(R.string.turn_off_mute), Toast.LENGTH_LONG).show();
                         }
                     });
-                    isToastShowing = true;
+                    isNotificationsToastShowing = true;
                 }
             }
-        }
-        if (SaveValues.StateValues.isNotificationsOn) {
-            if (volume[2] < 1) volume[2] = 1;
-            audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, volume[2], AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
         }
         if (SaveValues.StateValues.isAlarmOn) {
             if (volume[3] < 1) volume[3] = 1;
