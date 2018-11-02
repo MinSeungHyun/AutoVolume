@@ -15,7 +15,6 @@ class SaveValues {
 
         //MainActivity
         static final String switchPreference = "switch_state";
-        final static String autoVolumeState = "autoVolume_state";
         static final String ringtoneState = "ringtone_state";
         static final String mediaState = "media_state";
         static final String notificationsState = "notifications_state";
@@ -48,7 +47,6 @@ class SaveValues {
     }
 
     static final class DefValues {
-        static final boolean autoVolume = false;
         static final boolean ringtone = false;
         static final boolean media = false;
         static final boolean notifications = false;

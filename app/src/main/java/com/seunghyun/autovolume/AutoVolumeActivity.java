@@ -23,7 +23,7 @@ public class AutoVolumeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(R.string.app_name);
+        setTitle(R.string.detail_setting);
         setContentView(R.layout.activity_auto_volume);
         isRunning = true;
 
