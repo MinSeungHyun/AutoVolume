@@ -157,27 +157,49 @@ public class AutoVolumeService extends Service {
     private void setVolume() {
         if (SaveValues.StateValues.isRingtoneOn) {
             if (volume[0] < 1) volume[0] = 1;
+            //볼륨이 음소거되있을때 실행되는 것 방지
             if (audioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
+                isToastShowing = false;
                 audioManager.setStreamVolume(AudioManager.STREAM_RING, volume[0], AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+            } else {
+                if (!isToastShowing) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(AutoVolumeService.this, getString(R.string.app_name) + ": " + getString(R.string.turn_off_mute), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    isToastShowing = true;
+                }
             }
         }
         if (SaveValues.StateValues.isMediaOn) {
             if (volume[1] < 1) volume[1] = 1;
+            //볼륨이 음소거되있을때 실행되는 것 방지
             if (audioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
+                isToastShowing = false;
                 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume[1], AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+            } else {
+                if (!isToastShowing) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(AutoVolumeService.this, getString(R.string.app_name) + ": " + getString(R.string.turn_off_mute), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    isToastShowing = true;
+                }
             }
         }
         if (SaveValues.StateValues.isNotificationsOn) {
             if (volume[2] < 1) volume[2] = 1;
-            if (audioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
-                audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, volume[2], AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
-            }
+            audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, volume[2], AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
         }
         if (SaveValues.StateValues.isAlarmOn) {
             if (volume[3] < 1) volume[3] = 1;
-            if (audioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
-                audioManager.setStreamVolume(AudioManager.STREAM_ALARM, volume[3], AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
-            }
+            audioManager.setStreamVolume(AudioManager.STREAM_ALARM, volume[3], AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
         }
     }
 
@@ -225,65 +247,50 @@ public class AutoVolumeService extends Service {
         public void run() {
             int time = 1;
             while (SaveValues.StateValues.isAutoVolumeOn) {
-                //볼륨이 음소거 되있을때 실행되는것 방지
-                if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT) {
-                    if (!isToastShowing) {
-                        Handler handler = new Handler(Looper.getMainLooper());
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(AutoVolumeService.this, getString(R.string.app_name) + ": " + getString(R.string.turn_off_mute), Toast.LENGTH_LONG).show();
-                            }
-                        });
-                        isToastShowing = true;
-                    }
+                int decibel = MeasuringSoundThread.decibel;
+                decibel += (SaveValues.StateValues.micLevel - 100); //마이크 수준에따라 값 조절
+
+                //변경 간격동안 볼륨 평균 계산
+                time++;
+                if (time < SaveValues.StateValues.changeInterval) {
+                    if (SaveValues.StateValues.isRingtoneOn)
+                        sum[0] += getVolume(decibel, SaveValues.Keys.ringtone);
+                    if (SaveValues.StateValues.isMediaOn)
+                        sum[1] += getVolume(decibel, SaveValues.Keys.media);
+                    if (SaveValues.StateValues.isNotificationsOn)
+                        sum[2] += getVolume(decibel, SaveValues.Keys.notifications);
+                    if (SaveValues.StateValues.isAlarmOn)
+                        sum[3] += getVolume(decibel, SaveValues.Keys.alarm);
+
                 } else {
-                    isToastShowing = false;
-                    int decibel = MeasuringSoundThread.decibel;
-                    decibel += (SaveValues.StateValues.micLevel - 100); //마이크 수준에따라 값 조절
-
-                    //변경 간격동안 볼륨 평균 계산
-                    time++;
-                    if (time < SaveValues.StateValues.changeInterval) {
-                        if (SaveValues.StateValues.isRingtoneOn)
-                            sum[0] += getVolume(decibel, SaveValues.Keys.ringtone);
-                        if (SaveValues.StateValues.isMediaOn)
-                            sum[1] += getVolume(decibel, SaveValues.Keys.media);
-                        if (SaveValues.StateValues.isNotificationsOn)
-                            sum[2] += getVolume(decibel, SaveValues.Keys.notifications);
-                        if (SaveValues.StateValues.isAlarmOn)
-                            sum[3] += getVolume(decibel, SaveValues.Keys.alarm);
-
-                    } else {
-                        if (SaveValues.StateValues.isRingtoneOn) {
-                            sum[0] += getVolume(decibel, SaveValues.Keys.ringtone);
-                            volume[0] = sum[0] / time;
-                        }
-                        if (SaveValues.StateValues.isMediaOn) {
-                            sum[1] += getVolume(decibel, SaveValues.Keys.media);
-                            volume[1] = sum[1] / time;
-                        }
-                        if (SaveValues.StateValues.isNotificationsOn) {
-                            sum[2] += getVolume(decibel, SaveValues.Keys.notifications);
-                            volume[2] = sum[2] / time;
-                        }
-                        if (SaveValues.StateValues.isAlarmOn) {
-                            sum[3] += getVolume(decibel, SaveValues.Keys.alarm);
-                            volume[3] = sum[3] / time;
-                        }
-                        setVolume();
-                        time = 0;
-                        sum[0] = 0;
-                        sum[1] = 0;
-                        sum[2] = 0;
-                        sum[3] = 0;
+                    if (SaveValues.StateValues.isRingtoneOn) {
+                        sum[0] += getVolume(decibel, SaveValues.Keys.ringtone);
+                        volume[0] = sum[0] / time;
                     }
-                    //딜레이
-                    try {
-                        sleep(1000);
-                    } catch (InterruptedException e) {
-                        Log.e("[Error]", "InterruptedException");
+                    if (SaveValues.StateValues.isMediaOn) {
+                        sum[1] += getVolume(decibel, SaveValues.Keys.media);
+                        volume[1] = sum[1] / time;
                     }
+                    if (SaveValues.StateValues.isNotificationsOn) {
+                        sum[2] += getVolume(decibel, SaveValues.Keys.notifications);
+                        volume[2] = sum[2] / time;
+                    }
+                    if (SaveValues.StateValues.isAlarmOn) {
+                        sum[3] += getVolume(decibel, SaveValues.Keys.alarm);
+                        volume[3] = sum[3] / time;
+                    }
+                    setVolume();
+                    time = 0;
+                    sum[0] = 0;
+                    sum[1] = 0;
+                    sum[2] = 0;
+                    sum[3] = 0;
+                }
+                //딜레이
+                try {
+                    sleep(1000);
+                } catch (InterruptedException e) {
+                    Log.e("[Error]", "InterruptedException");
                 }
             }
         }
