@@ -47,14 +47,12 @@ limitations under the License. -->
             style="@style/defaultText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="5" />
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/rightText"
             style="@style/defaultText"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="5" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </LinearLayout>
