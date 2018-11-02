@@ -17,7 +17,7 @@
     <LinearLayout
         android:id="@+id/top_linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
@@ -43,22 +43,6 @@
             android:layout_marginEnd="16dp"
             android:text="@string/setting"
             android:textColor="#90ffffff" />
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
-            android:background="#32000000" />
-
-        <Switch
-            android:id="@+id/main_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingTop="16dp"
-            android:paddingEnd="24dp"
-            android:paddingBottom="16dp" />
     </LinearLayout>
 
     <View
@@ -338,15 +322,4 @@
         android:layout_height="1dp"
         android:background="@color/divider"
         app:layout_constraintTop_toBottomOf="@id/linearLayout_1" />
-
-    <!--메인 스위치가 꺼져있을때 하이라이트 하는 뷰-->
-    <View
-        android:id="@+id/highlight_switch"
-        android:layout_width="88dp"
-        android:layout_height="0dp"
-        android:alpha="0"
-        android:background="@color/colorAccent"
-        app:layout_constraintBottom_toBottomOf="@id/top_linearLayout"
-        app:layout_constraintEnd_toEndOf="@id/top_linearLayout"
-        app:layout_constraintTop_toTopOf="@id/top_linearLayout" />
 </android.support.constraint.ConstraintLayout>

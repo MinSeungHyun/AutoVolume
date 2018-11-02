@@ -1,7 +1,6 @@
 package com.seunghyun.autovolume;
 
 import android.Manifest;
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
@@ -24,10 +23,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,8 +41,6 @@ public class MainActivity extends AppCompatActivity {
     //view
     private TextView textView_1, textView_2, textView_3, textView_4,
             minRingtone, maxRingtone, minMedia, maxMedia, minNotifications, maxNotifications, minAlarm, maxAlarm;
-    private Switch mainSwitch;
-    private View highlightSwitch;
     private LinearLayout topLinearLayout, linearLayout_1, linearLayout_2, linearLayout_3, linearLayout_4,
             rangeLinearLayout_1, rangeLinearLayout_2, rangeLinearLayout_3, rangeLinearLayout_4;
     private ImageView imageView_1, imageView_2, imageView_3, imageView_4;
@@ -86,15 +81,6 @@ public class MainActivity extends AppCompatActivity {
         reloadTextState();
 
         setListeners();
-
-        //서비스 실행상태에 따라 변경
-        if (isServiceRunning()) mainSwitch.setChecked(true);
-        else mainSwitch.setChecked(false);
-
-        //mainSwitch 값에 따라 항목 변경
-        if (mainSwitch.isChecked()) setEnableByMainSwitch();
-        else setDisableByMainSwitch();
-
     }
 
     /**
@@ -149,8 +135,6 @@ public class MainActivity extends AppCompatActivity {
         maxNotifications = findViewById(R.id.max_notifications);
         maxAlarm = findViewById(R.id.max_alarm);
 
-        mainSwitch = findViewById(R.id.main_switch);
-
         topLinearLayout = findViewById(R.id.top_linearLayout);
         linearLayout_1 = findViewById(R.id.linearLayout_1);
         linearLayout_2 = findViewById(R.id.linearLayout_2);
@@ -165,8 +149,6 @@ public class MainActivity extends AppCompatActivity {
         imageView_2 = findViewById(R.id.mediaIcon);
         imageView_3 = findViewById(R.id.notificationsIcon);
         imageView_4 = findViewById(R.id.alarmIcon);
-
-        highlightSwitch = findViewById(R.id.highlight_switch);
     }
 
     /**
@@ -187,22 +169,30 @@ public class MainActivity extends AppCompatActivity {
      * 저장되었던 스위치 상태를 가져오는 메소드
      */
     private void reloadSwitchState() {
-        Boolean isChecked = switchPreference.getBoolean(SaveValues.Keys.autoVolumeState, SaveValues.DefValues.autoVolume);
-        Boolean isChecked_1 = switchPreference.getBoolean(SaveValues.Keys.ringtoneState, SaveValues.DefValues.ringtone);
-        Boolean isChecked_2 = switchPreference.getBoolean(SaveValues.Keys.mediaState, SaveValues.DefValues.media);
-        Boolean isChecked_3 = switchPreference.getBoolean(SaveValues.Keys.notificationsState, SaveValues.DefValues.notifications);
-        Boolean isChecked_4 = switchPreference.getBoolean(SaveValues.Keys.alarmState, SaveValues.DefValues.alarm);
+        if (isServiceRunning()) {
+            Boolean isChecked_1 = switchPreference.getBoolean(SaveValues.Keys.ringtoneState, SaveValues.DefValues.ringtone);
+            Boolean isChecked_2 = switchPreference.getBoolean(SaveValues.Keys.mediaState, SaveValues.DefValues.media);
+            Boolean isChecked_3 = switchPreference.getBoolean(SaveValues.Keys.notificationsState, SaveValues.DefValues.notifications);
+            Boolean isChecked_4 = switchPreference.getBoolean(SaveValues.Keys.alarmState, SaveValues.DefValues.alarm);
 
-        mainSwitch.setChecked(isChecked);
-        setIconTV(imageView_1, textView_1, isChecked_1);
-        setIconTV(imageView_2, textView_2, isChecked_2);
-        setIconTV(imageView_3, textView_3, isChecked_3);
-        setIconTV(imageView_4, textView_4, isChecked_4);
-        SaveValues.StateValues.isRingtoneOn = isChecked_1;
-        SaveValues.StateValues.isMediaOn = isChecked_2;
-        SaveValues.StateValues.isNotificationsOn = isChecked_3;
-        SaveValues.StateValues.isAlarmOn = isChecked_4;
-
+            setIconTV(imageView_1, textView_1, isChecked_1);
+            setIconTV(imageView_2, textView_2, isChecked_2);
+            setIconTV(imageView_3, textView_3, isChecked_3);
+            setIconTV(imageView_4, textView_4, isChecked_4);
+            SaveValues.StateValues.isRingtoneOn = isChecked_1;
+            SaveValues.StateValues.isMediaOn = isChecked_2;
+            SaveValues.StateValues.isNotificationsOn = isChecked_3;
+            SaveValues.StateValues.isAlarmOn = isChecked_4;
+        } else {
+            setIconTV(imageView_1, textView_1, false);
+            setIconTV(imageView_2, textView_2, false);
+            setIconTV(imageView_3, textView_3, false);
+            setIconTV(imageView_4, textView_4, false);
+            SaveValues.StateValues.isRingtoneOn = false;
+            SaveValues.StateValues.isMediaOn = false;
+            SaveValues.StateValues.isNotificationsOn = false;
+            SaveValues.StateValues.isAlarmOn = false;
+        }
     }
 
     /**
@@ -232,135 +222,29 @@ public class MainActivity extends AppCompatActivity {
      * 리스너 설정
      */
     private void setListeners() {
-        mainSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                switchPreferenceEditor.putBoolean(SaveValues.Keys.autoVolumeState, isChecked);
-                switchPreferenceEditor.commit();
-                if (isChecked) {
-                    //권한 허용 여부 확인하고 거부되었으면 팝업 띄움
-                    Boolean permissionGranted = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
-                    if (!permissionGranted) {
-                        //권한 거부됨
-                        new AlertDialog.Builder(MainActivity.this)
-                                .setTitle(getString(R.string.notice))
-                                .setMessage(getString(R.string.permission_denied_message))
-                                .setNeutralButton(getString(R.string.setting_capital), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                        intent.setData(Uri.parse("package:" + getPackageName()));
-                                        startActivity(intent);
-                                    }
-                                })
-                                .setPositiveButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                    }
-                                })
-                                .setCancelable(false)
-                                .create()
-                                .show();
-                        //스위치 체크된것 취소
-                        mainSwitch.setChecked(false);
-                        switchPreferenceEditor.putBoolean(SaveValues.Keys.autoVolumeState, false);
-                        switchPreferenceEditor.commit();
-                    } else {
-                        //권한 허용됨, 활성화
-                        setEnableByMainSwitch();
-                        //서비스 시작
-                        Intent service = new Intent(MainActivity.this, AutoVolumeService.class);
-                        startService(service);
-                        SaveValues.StateValues.isAutoVolumeOn = true;
-                    }
-                } else {
-                    //비활성화
-                    setDisableByMainSwitch();
-                    //서비스 종료
-                    SaveValues.StateValues.isAutoVolumeOn = false;
-                    Intent service = new Intent(MainActivity.this, AutoVolumeService.class);
-                    stopService(service);
-                }
-            }
-        });
-
-        topLinearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AutoVolumeActivity.class);
-                startActivity(intent);
-            }
-        });
-
         LinearLayout.OnClickListener itemLinearLayoutClickListener = new LinearLayout.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mainSwitch.isChecked()) {
-                    switch (view.getId()) {
-                        case R.id.linearLayout_1:
-                            if (SaveValues.StateValues.isRingtoneOn) {
-                                switchPreferenceEditor.putBoolean(SaveValues.Keys.ringtoneState, false);
-                                switchPreferenceEditor.apply();
-                                SaveValues.StateValues.isRingtoneOn = false;
-                                setIconTV(imageView_1, textView_1, false);
-                            } else {
-                                switchPreferenceEditor.putBoolean(SaveValues.Keys.ringtoneState, true);
-                                switchPreferenceEditor.apply();
-                                SaveValues.StateValues.isRingtoneOn = true;
-                                setIconTV(imageView_1, textView_1, true);
-                            }
-                            break;
-                        case R.id.linearLayout_2:
-                            if (SaveValues.StateValues.isMediaOn) {
-                                switchPreferenceEditor.putBoolean(SaveValues.Keys.mediaState, false);
-                                switchPreferenceEditor.apply();
-                                SaveValues.StateValues.isMediaOn = false;
-                                setIconTV(imageView_2, textView_2, false);
-                            } else {
-                                switchPreferenceEditor.putBoolean(SaveValues.Keys.mediaState, true);
-                                switchPreferenceEditor.apply();
-                                SaveValues.StateValues.isMediaOn = true;
-                                setIconTV(imageView_2, textView_2, true);
-                            }
-                            break;
-                        case R.id.linearLayout_3:
-                            if (SaveValues.StateValues.isNotificationsOn) {
-                                switchPreferenceEditor.putBoolean(SaveValues.Keys.notificationsState, false);
-                                switchPreferenceEditor.apply();
-                                SaveValues.StateValues.isNotificationsOn = false;
-                                setIconTV(imageView_3, textView_3, false);
-                            } else {
-                                switchPreferenceEditor.putBoolean(SaveValues.Keys.notificationsState, true);
-                                switchPreferenceEditor.apply();
-                                SaveValues.StateValues.isNotificationsOn = true;
-                                setIconTV(imageView_3, textView_3, true);
-                            }
-                            break;
-                        case R.id.linearLayout_4:
-                            if (SaveValues.StateValues.isAlarmOn) {
-                                switchPreferenceEditor.putBoolean(SaveValues.Keys.alarmState, false);
-                                switchPreferenceEditor.apply();
-                                SaveValues.StateValues.isAlarmOn = false;
-                                setIconTV(imageView_4, textView_4, false);
-                            } else {
-                                switchPreferenceEditor.putBoolean(SaveValues.Keys.alarmState, true);
-                                switchPreferenceEditor.apply();
-                                SaveValues.StateValues.isAlarmOn = true;
-                                setIconTV(imageView_4, textView_4, true);
-                            }
-                            break;
-                    }
+                Boolean permissionGranted = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+                if (!permissionGranted) {
+                    //권한 거부됨
+                    showPermissionPopup();
                 } else {
-                    //강조
-                    ValueAnimator animation = ValueAnimator.ofFloat(1f, 0f);
-                    animation.setDuration(1000);
-                    animation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                        @Override
-                        public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                            highlightSwitch.setAlpha((float) valueAnimator.getAnimatedValue());
+                    //권한 혀용됨
+                    saveSwitchState(view);
+                    if (!SaveValues.StateValues.isRingtoneOn && !SaveValues.StateValues.isMediaOn && !SaveValues.StateValues.isNotificationsOn && !SaveValues.StateValues.isAlarmOn) {
+                        //모든 항목이 꺼졌으므로 서비스 종료
+                        SaveValues.StateValues.isAutoVolumeOn = false;
+                        Intent service = new Intent(MainActivity.this, AutoVolumeService.class);
+                        stopService(service);
+                    } else {
+                        if (!isServiceRunning()) {
+                            //서비스 시작
+                            Intent service = new Intent(MainActivity.this, AutoVolumeService.class);
+                            startService(service);
+                            SaveValues.StateValues.isAutoVolumeOn = true;
                         }
-                    });
-                    animation.start();
+                    }
                 }
             }
         };
@@ -368,6 +252,21 @@ public class MainActivity extends AppCompatActivity {
         linearLayout_2.setOnClickListener(itemLinearLayoutClickListener);
         linearLayout_3.setOnClickListener(itemLinearLayoutClickListener);
         linearLayout_4.setOnClickListener(itemLinearLayoutClickListener);
+
+        topLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Boolean permissionGranted = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+                if (!permissionGranted) {
+                    //권한 거부됨
+                    showPermissionPopup();
+                } else {
+                    //권한 혀용됨
+                    Intent intent = new Intent(MainActivity.this, AutoVolumeActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
 
         LinearLayout.OnClickListener rangeLinearLayoutClickListener = new LinearLayout.OnClickListener() {
             @Override
@@ -396,6 +295,92 @@ public class MainActivity extends AppCompatActivity {
         rangeLinearLayout_4.setOnClickListener(rangeLinearLayoutClickListener);
     }
 
+
+    /**
+     * 항목의 상태 저장
+     */
+    private void saveSwitchState(View view) {
+        switch (view.getId()) {
+            case R.id.linearLayout_1:
+                if (SaveValues.StateValues.isRingtoneOn) {
+                    switchPreferenceEditor.putBoolean(SaveValues.Keys.ringtoneState, false);
+                    switchPreferenceEditor.apply();
+                    SaveValues.StateValues.isRingtoneOn = false;
+                    setIconTV(imageView_1, textView_1, false);
+                } else {
+                    switchPreferenceEditor.putBoolean(SaveValues.Keys.ringtoneState, true);
+                    switchPreferenceEditor.apply();
+                    SaveValues.StateValues.isRingtoneOn = true;
+                    setIconTV(imageView_1, textView_1, true);
+                }
+                break;
+            case R.id.linearLayout_2:
+                if (SaveValues.StateValues.isMediaOn) {
+                    switchPreferenceEditor.putBoolean(SaveValues.Keys.mediaState, false);
+                    switchPreferenceEditor.apply();
+                    SaveValues.StateValues.isMediaOn = false;
+                    setIconTV(imageView_2, textView_2, false);
+                } else {
+                    switchPreferenceEditor.putBoolean(SaveValues.Keys.mediaState, true);
+                    switchPreferenceEditor.apply();
+                    SaveValues.StateValues.isMediaOn = true;
+                    setIconTV(imageView_2, textView_2, true);
+                }
+                break;
+            case R.id.linearLayout_3:
+                if (SaveValues.StateValues.isNotificationsOn) {
+                    switchPreferenceEditor.putBoolean(SaveValues.Keys.notificationsState, false);
+                    switchPreferenceEditor.apply();
+                    SaveValues.StateValues.isNotificationsOn = false;
+                    setIconTV(imageView_3, textView_3, false);
+                } else {
+                    switchPreferenceEditor.putBoolean(SaveValues.Keys.notificationsState, true);
+                    switchPreferenceEditor.apply();
+                    SaveValues.StateValues.isNotificationsOn = true;
+                    setIconTV(imageView_3, textView_3, true);
+                }
+                break;
+            case R.id.linearLayout_4:
+                if (SaveValues.StateValues.isAlarmOn) {
+                    switchPreferenceEditor.putBoolean(SaveValues.Keys.alarmState, false);
+                    switchPreferenceEditor.apply();
+                    SaveValues.StateValues.isAlarmOn = false;
+                    setIconTV(imageView_4, textView_4, false);
+                } else {
+                    switchPreferenceEditor.putBoolean(SaveValues.Keys.alarmState, true);
+                    switchPreferenceEditor.apply();
+                    SaveValues.StateValues.isAlarmOn = true;
+                    setIconTV(imageView_4, textView_4, true);
+                }
+                break;
+        }
+    }
+
+    /**
+     * 권한 거부됬을 시 팝업으로 알려줌
+     */
+    private void showPermissionPopup() {
+        new AlertDialog.Builder(MainActivity.this)
+                .setTitle(getString(R.string.notice))
+                .setMessage(getString(R.string.permission_denied_message))
+                .setNeutralButton(getString(R.string.setting_capital), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        intent.setData(Uri.parse("package:" + getPackageName()));
+                        startActivity(intent);
+                    }
+                })
+                .setPositiveButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                })
+                .setCancelable(false)
+                .create()
+                .show();
+    }
+
     /**
      * 아이콘과 글씨를 활성화 또는 비활성화
      */
@@ -407,34 +392,6 @@ public class MainActivity extends AppCompatActivity {
             imageView.setColorFilter(null);
             textView.setTextColor(Color.parseColor("#000000"));
         }
-    }
-
-    /**
-     * mainSwitch 의 값에따라 항목들 활성화
-     */
-    private void setEnableByMainSwitch() {
-        imageView_1.setAlpha(1f);
-        imageView_2.setAlpha(1f);
-        imageView_3.setAlpha(1f);
-        imageView_4.setAlpha(1f);
-        textView_1.setAlpha(1f);
-        textView_2.setAlpha(1f);
-        textView_3.setAlpha(1f);
-        textView_4.setAlpha(1f);
-    }
-
-    /**
-     * mainSwitch 의 값에따라 항목들 비활성화
-     */
-    private void setDisableByMainSwitch() {
-        imageView_1.setAlpha(0.5f);
-        imageView_2.setAlpha(0.5f);
-        imageView_3.setAlpha(0.5f);
-        imageView_4.setAlpha(0.5f);
-        textView_1.setAlpha(0.5f);
-        textView_2.setAlpha(0.5f);
-        textView_3.setAlpha(0.5f);
-        textView_4.setAlpha(0.5f);
     }
 
     /**
