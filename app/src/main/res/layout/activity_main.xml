@@ -17,7 +17,7 @@
     <LinearLayout
         android:id="@+id/top_linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="58dp"
+        android:layout_height="54dp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
@@ -26,11 +26,12 @@
         <TextView
             android:id="@+id/main_text"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
             android:layout_marginStart="24dp"
             android:text="@string/detail_setting"
             android:textColor="#ffffff"
-            android:textSize="20sp" />
+            android:textSize="20dp" />
 
         <View
             android:layout_width="0dp"
@@ -124,6 +125,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/max_volume"
+                    app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toStartOf="@+id/max_ringtone"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -141,10 +143,10 @@
             </android.support.constraint.ConstraintLayout>
 
             <TextView
+                style="@style/changeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/change"
-                android:textColor="#000000" />
+                android:text="@string/change" />
         </LinearLayout>
 
     </LinearLayout>
@@ -219,6 +221,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/max_volume"
+                    app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toStartOf="@+id/max_media"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -236,10 +239,10 @@
             </android.support.constraint.ConstraintLayout>
 
             <TextView
+                style="@style/changeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/change"
-                android:textColor="#000000" />
+                android:text="@string/change" />
         </LinearLayout>
     </LinearLayout>
 
@@ -313,6 +316,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/max_volume"
+                    app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toStartOf="@+id/max_notifications"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -330,10 +334,10 @@
             </android.support.constraint.ConstraintLayout>
 
             <TextView
+                style="@style/changeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/change"
-                android:textColor="#000000" />
+                android:text="@string/change" />
         </LinearLayout>
     </LinearLayout>
 
@@ -407,6 +411,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/max_volume"
+                    app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toStartOf="@+id/max_alarm"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -424,10 +429,10 @@
             </android.support.constraint.ConstraintLayout>
 
             <TextView
+                style="@style/changeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/change"
-                android:textColor="#000000" />
+                android:text="@string/change" />
         </LinearLayout>
     </LinearLayout>
 
