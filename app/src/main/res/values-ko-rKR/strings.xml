@@ -12,8 +12,8 @@
     <string name="volume_interval">볼륨 조절 간격</string>
     <string name="low">낮음</string>
     <string name="high">높음</string>
-    <string name="min_volume">최소 볼륨: %d</string>
-    <string name="max_volume">최대 볼륨: %d</string>
+    <string name="min_volume">최소 볼륨:" "</string>
+    <string name="max_volume">최대 볼륨:" "</string>
     <string name="volume_range">볼륨 변경 범위</string>
     <string name="backButton_twice">뒤로 버튼을 한번 더 누르면 종료합니다.</string>
     <string name="notification_content">자동 볼륨이 켜져있습니다.</string>

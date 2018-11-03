@@ -14,8 +14,8 @@
     <string name="high">high</string>
     <string name="volume_range">volume adjustment range</string>
     <string name="backButton_twice">Press the Back button again to exit.</string>
-    <string name="min_volume">Min Volume: %d</string>
-    <string name="max_volume">Max Volume: %d</string>
+    <string name="min_volume">Min Volume:" "</string>
+    <string name="max_volume">Max Volume:" "</string>
     <string name="notification_content">Auto volume is on.</string>
     <string name="minute">minute</string>
     <string name="second">second</string>

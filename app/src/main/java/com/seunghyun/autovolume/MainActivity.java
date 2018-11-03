@@ -102,20 +102,20 @@ public class MainActivity extends AppCompatActivity {
     public void changeTV(MinMaxValueEvent event) {
         switch (event.keyName) {
             case SaveValues.Keys.ringtone:
-                minRingtone.setText(String.format(getString(R.string.min_volume), event.minValue));
-                maxRingtone.setText(String.format(getString(R.string.max_volume), event.maxValue));
+                minRingtone.setText(String.valueOf(event.minValue));
+                maxRingtone.setText(String.valueOf(event.maxValue));
                 break;
             case SaveValues.Keys.media:
-                minMedia.setText(String.format(getString(R.string.min_volume), event.minValue));
-                maxMedia.setText(String.format(getString(R.string.max_volume), event.maxValue));
+                minMedia.setText(String.valueOf(event.minValue));
+                maxMedia.setText(String.valueOf(event.maxValue));
                 break;
             case SaveValues.Keys.notifications:
-                minNotifications.setText(String.format(getString(R.string.min_volume), event.minValue));
-                maxNotifications.setText(String.format(getString(R.string.max_volume), event.maxValue));
+                minNotifications.setText(String.valueOf(event.minValue));
+                maxNotifications.setText(String.valueOf(event.maxValue));
                 break;
             case SaveValues.Keys.alarm:
-                minAlarm.setText(String.format(getString(R.string.min_volume), event.minValue));
-                maxAlarm.setText(String.format(getString(R.string.max_volume), event.maxValue));
+                minAlarm.setText(String.valueOf(event.minValue));
+                maxAlarm.setText(String.valueOf(event.maxValue));
                 break;
         }
     }
@@ -210,14 +210,14 @@ public class MainActivity extends AppCompatActivity {
         int sMinAlarm = volumeRangePreference.getInt(SaveValues.Keys.alarmMin, 0);
         int sMaxAlarm = volumeRangePreference.getInt(SaveValues.Keys.alarmMax, audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
 
-        minRingtone.setText(String.format(getString(R.string.min_volume), sMinRingtone));
-        maxRingtone.setText(String.format(getString(R.string.max_volume), sMaxRingtone));
-        minMedia.setText(String.format(getString(R.string.min_volume), sMinMedia));
-        maxMedia.setText(String.format(getString(R.string.max_volume), sMaxMedia));
-        minNotifications.setText(String.format(getString(R.string.min_volume), sMinNotifications));
-        maxNotifications.setText(String.format(getString(R.string.max_volume), sMaxNotifications));
-        minAlarm.setText(String.format(getString(R.string.min_volume), sMinAlarm));
-        maxAlarm.setText(String.format(getString(R.string.max_volume), sMaxAlarm));
+        minRingtone.setText(String.valueOf(sMinRingtone));
+        maxRingtone.setText(String.valueOf(sMaxRingtone));
+        minMedia.setText(String.valueOf(sMinMedia));
+        maxMedia.setText(String.valueOf(sMaxMedia));
+        minNotifications.setText(String.valueOf(sMinNotifications));
+        maxNotifications.setText(String.valueOf(sMaxNotifications));
+        minAlarm.setText(String.valueOf(sMinAlarm));
+        maxAlarm.setText(String.valueOf(sMaxAlarm));
     }
 
     /**

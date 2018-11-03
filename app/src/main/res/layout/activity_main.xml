@@ -86,7 +86,7 @@
 
         <LinearLayout
             android:id="@+id/range_linearLayout_1"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
@@ -95,19 +95,50 @@
             android:orientation="vertical"
             android:padding="8dp">
 
-            <TextView
-                android:id="@+id/min_ringtone"
-                style="@style/minMaxText"
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/min_volume" />
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/max_ringtone"
-                style="@style/minMaxText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/max_volume" />
+                <TextView
+                    android:id="@+id/minTV_1"
+                    style="@style/minMaxText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/min_volume"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintEnd_toStartOf="@id/min_ringtone"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/min_ringtone"
+                    style="@style/minMaxText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1" />
+
+                <TextView
+                    style="@style/minMaxText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/max_volume"
+                    app:layout_constraintEnd_toStartOf="@+id/max_ringtone"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/minTV_1" />
+
+                <TextView
+                    android:id="@+id/max_ringtone"
+                    style="@style/minMaxText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1"
+                    app:layout_constraintTop_toBottomOf="@id/min_ringtone" />
+            </android.support.constraint.ConstraintLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -150,7 +181,7 @@
 
         <LinearLayout
             android:id="@+id/range_linearLayout_2"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
@@ -159,19 +190,50 @@
             android:orientation="vertical"
             android:padding="8dp">
 
-            <TextView
-                android:id="@+id/min_media"
-                style="@style/minMaxText"
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/min_volume" />
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/max_media"
-                style="@style/minMaxText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/max_volume" />
+                <TextView
+                    android:id="@+id/minTV_2"
+                    style="@style/minMaxText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/min_volume"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintEnd_toStartOf="@id/min_media"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/min_media"
+                    style="@style/minMaxText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1" />
+
+                <TextView
+                    style="@style/minMaxText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/max_volume"
+                    app:layout_constraintEnd_toStartOf="@+id/max_media"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/minTV_2" />
+
+                <TextView
+                    android:id="@+id/max_media"
+                    style="@style/minMaxText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1"
+                    app:layout_constraintTop_toBottomOf="@id/min_media" />
+            </android.support.constraint.ConstraintLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -179,7 +241,6 @@
                 android:text="@string/change"
                 android:textColor="#000000" />
         </LinearLayout>
-
     </LinearLayout>
 
     <LinearLayout
@@ -214,7 +275,7 @@
 
         <LinearLayout
             android:id="@+id/range_linearLayout_3"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
@@ -223,19 +284,50 @@
             android:orientation="vertical"
             android:padding="8dp">
 
-            <TextView
-                android:id="@+id/min_notifications"
-                style="@style/minMaxText"
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/min_volume" />
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/max_notifications"
-                style="@style/minMaxText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/max_volume" />
+                <TextView
+                    android:id="@+id/minTV_3"
+                    style="@style/minMaxText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/min_volume"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintEnd_toStartOf="@id/min_notifications"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/min_notifications"
+                    style="@style/minMaxText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1" />
+
+                <TextView
+                    style="@style/minMaxText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/max_volume"
+                    app:layout_constraintEnd_toStartOf="@+id/max_notifications"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/minTV_3" />
+
+                <TextView
+                    android:id="@+id/max_notifications"
+                    style="@style/minMaxText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1"
+                    app:layout_constraintTop_toBottomOf="@id/min_notifications" />
+            </android.support.constraint.ConstraintLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -243,7 +335,6 @@
                 android:text="@string/change"
                 android:textColor="#000000" />
         </LinearLayout>
-
     </LinearLayout>
 
     <LinearLayout
@@ -278,7 +369,7 @@
 
         <LinearLayout
             android:id="@+id/range_linearLayout_4"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
@@ -287,19 +378,50 @@
             android:orientation="vertical"
             android:padding="8dp">
 
-            <TextView
-                android:id="@+id/min_alarm"
-                style="@style/minMaxText"
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/min_volume" />
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/max_alarm"
-                style="@style/minMaxText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/max_volume" />
+                <TextView
+                    android:id="@+id/minTV_4"
+                    style="@style/minMaxText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/min_volume"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintEnd_toStartOf="@id/min_alarm"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/min_alarm"
+                    style="@style/minMaxText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1" />
+
+                <TextView
+                    style="@style/minMaxText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/max_volume"
+                    app:layout_constraintEnd_toStartOf="@+id/max_alarm"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/minTV_4" />
+
+                <TextView
+                    android:id="@+id/max_alarm"
+                    style="@style/minMaxText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1"
+                    app:layout_constraintTop_toBottomOf="@id/min_alarm" />
+            </android.support.constraint.ConstraintLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -307,7 +429,6 @@
                 android:text="@string/change"
                 android:textColor="#000000" />
         </LinearLayout>
-
     </LinearLayout>
 
     <View
