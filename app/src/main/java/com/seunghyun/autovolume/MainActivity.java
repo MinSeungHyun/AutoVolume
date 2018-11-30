@@ -34,6 +34,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Objects;
 
+import smartdevelop.ir.eram.showcaseviewlib.GuideView;
+
 public class MainActivity extends AppCompatActivity {
     static boolean isRunning = false;
     //etc
@@ -82,6 +84,14 @@ public class MainActivity extends AppCompatActivity {
         reloadTextState();
 
         setListeners();
+
+        new GuideView.Builder(this)
+                .setTitle("Guide Title Text")
+                .setContentText("Guide Description Text\n .....Guide Description Text\n .....Guide Description Text .....")
+                .setGravity(GuideView.Gravity.center)
+                .setTargetView(topLinearLayout)
+                .build()
+                .show();
     }
 
     /**
