@@ -5,9 +5,9 @@
     <string name="media">미디어</string>
     <string name="notifications">알림</string>
     <string name="alarm">알람</string>
-    <string name="current_noise">현재 소음</string>
+    <string name="mic_input">마이크 입력값</string>
+    <string name="mic_volume">마이크 볼륨</string>
     <string name="mic_sensitive">마이크 감도</string>
-    <string name="mic_level">마이크 볼륨</string>
     <string name="change"><u>변경</u></string>
     <string name="volume_interval">볼륨 조절 간격</string>
     <string name="low">낮음</string>
@@ -26,4 +26,9 @@
     <string name="permission_denied_message">마이크 권한이 거부되었습니다. 주변의 소음을 측정하기 위해 마이크권한을 직접 허용하셔야 합니다.</string>
     <string name="permission_denied_toast">주변의 소음을 측정하기 위해 마이크권한을 허용하셔야 합니다.</string>
     <string name="turn_off">끄기</string>
+    <string name="detail_setting_description">자동볼륨 기능에 대한 세부적인 설정을 합니다. (마이크 볼륨, 마이크 감도, 볼륨 조절 간격)</string>
+    <string name="mic_input_description">이 값에 따라 스마트폰의 볼륨이 조절됩니다. 마이크 볼륨, 마이크 감도의 설정값을 반영하여 계산됩니다.</string>
+    <string name="mic_volume_description">높을수록 마이크 입력값이 더 크게 측정됩니다.</string>
+    <string name="mic_sensitive_description">높을수록 마이크 입력값이 변하는 범위가 커집니다.</string>
+    <string name="volume_interval_description">볼륨이 조절되는 간격입니다. 설정한 시간 동안 마이크 입력값의 평균치를 구하고 이에 따라 볼륨을 조절합니다.</string>
 </resources>

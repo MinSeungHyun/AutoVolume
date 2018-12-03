@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,6 +22,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
+import android.text.Spannable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -48,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
             rangeLinearLayout_1, rangeLinearLayout_2, rangeLinearLayout_3, rangeLinearLayout_4;
     private ImageView imageView_1, imageView_2, imageView_3, imageView_4;
     //sharedPreference
-    private SharedPreferences switchPreference, volumeRangePreference;
-    private SharedPreferences.Editor switchPreferenceEditor;
+    private SharedPreferences switchPreference, volumeRangePreference, isGuideShownPreference;
+    private SharedPreferences.Editor switchPreferenceEditor, isGuideShownEditor;
     //audioManager
     private AudioManager audioManager;
 
@@ -79,19 +82,10 @@ public class MainActivity extends AppCompatActivity {
 
         findViews();
         getReferences();
-
         reloadSwitchState();
         reloadTextState();
-
         setListeners();
-
-        new GuideView.Builder(this)
-                .setTitle("Guide Title Text")
-                .setContentText("Guide Description Text\n .....Guide Description Text\n .....Guide Description Text .....")
-                .setGravity(GuideView.Gravity.center)
-                .setTargetView(topLinearLayout)
-                .build()
-                .show();
+        makeGuides();
     }
 
     /**
@@ -171,7 +165,9 @@ public class MainActivity extends AppCompatActivity {
         //switchPreference 참조 생성
         switchPreference = getSharedPreferences(SaveValues.Keys.switchPreference, MODE_PRIVATE);
         volumeRangePreference = getSharedPreferences(SaveValues.Keys.rangePreference, MODE_PRIVATE);
+        isGuideShownPreference = getSharedPreferences(SaveValues.isGuideShownPreference.preferenceName, MODE_PRIVATE);
         switchPreferenceEditor = switchPreference.edit();
+        isGuideShownEditor = isGuideShownPreference.edit();
 
         //audioManager
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -307,6 +303,26 @@ public class MainActivity extends AppCompatActivity {
         rangeLinearLayout_4.setOnClickListener(rangeLinearLayoutClickListener);
     }
 
+    /**
+     * 가이드뷰 생성
+     */
+    private void makeGuides() {
+        if (!isGuideShownPreference.getBoolean(SaveValues.isGuideShownPreference.detailSetting, false)) {
+            new GuideView.Builder(this)
+                    .setTargetView(topLinearLayout)
+                    .setTitle(getString(R.string.detail_setting))
+                    .setContentSpan(SaveValues.GuideViewValues.contentSpan(getString(R.string.detail_setting_description)))
+                    .setTitleTypeFace(Typeface.defaultFromStyle(Typeface.BOLD))
+                    .setTitleTextSize(SaveValues.GuideViewValues.titleTextSize)
+                    .setContentTextSize(SaveValues.GuideViewValues.contentTextSize)
+                    .setGravity(GuideView.Gravity.center)
+                    .setDismissType(GuideView.DismissType.targetView)
+                    .build()
+                    .show();
+            isGuideShownEditor.putBoolean(SaveValues.isGuideShownPreference.detailSetting, true);
+            isGuideShownEditor.apply();
+        }
+    }
 
     /**
      * 항목의 상태 저장

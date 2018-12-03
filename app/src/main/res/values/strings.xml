@@ -5,17 +5,17 @@
     <string name="media">Media</string>
     <string name="notifications">Notifications</string>
     <string name="alarm">Alarm</string>
-    <string name="current_noise">Current Noise</string>
+    <string name="mic_input">Mic Input Value</string>
+    <string name="mic_volume">Mic Volume</string>
     <string name="mic_sensitive">Mic Sensitivity</string>
-    <string name="mic_level">Mic Volume</string>
     <string name="change"><u>change</u></string>
     <string name="volume_interval">Volume Adjustment Interval</string>
     <string name="low">low</string>
     <string name="high">high</string>
-    <string name="volume_range">volume adjustment range</string>
-    <string name="backButton_twice">Press the Back button again to exit.</string>
     <string name="min_volume">Min Volume:" "</string>
     <string name="max_volume">Max Volume:" "</string>
+    <string name="volume_range">volume adjustment range</string>
+    <string name="backButton_twice">Press the Back button again to exit.</string>
     <string name="notification_content">Auto volume is on.</string>
     <string name="minute">minute</string>
     <string name="second">second</string>
@@ -26,4 +26,9 @@
     <string name="permission_denied_message">Mic Permission denied. You need to allow the Mic Permission directly to measure noise around.</string>
     <string name="permission_denied_toast">You need to allow the Mic Permission to measure noise around.</string>
     <string name="turn_off">TURN OFF</string>
+    <string name="detail_setting_description">Set detail of Auto Volume function. (Mic Volume, Mic Sensitivity, Volume Adjustment Interval)</string>
+    <string name="mic_input_description">The volume of your smartphone will be adjusted depending on this value. \nThis value is calculated reflected the value of Mic volume and Mic Sensitivity.</string>
+    <string name="mic_volume_description">The higher the value, the larger the microphone input value is measured.</string>
+    <string name="mic_sensitive_description">The higher the value, the greater the range in which the microphone input value changes.</string>
+    <string name="volume_interval_description">The interval to adjust volume. The average value of the Mic Input Value is obtained during the set time and the volume is adjusted accordingly.</string>
 </resources>

@@ -1,5 +1,9 @@
 package com.seunghyun.autovolume;
 
+import android.graphics.Typeface;
+import android.text.Html;
+import android.text.Spannable;
+
 class SaveValues {
     static final class Keys {
         //RangePopupActivity
@@ -21,17 +25,31 @@ class SaveValues {
         static final String alarmState = "alarm_state";
 
         //MainActivity to RangePopupActivity Intent value
-        static final String viewName= "view_name";
-        static final String ringtone= "ringtone";
-        static final String media= "media";
-        static final String notifications= "notifications";
-        static final String alarm= "alarm";
+        static final String viewName = "view_name";
+        static final String ringtone = "ringtone";
+        static final String media = "media";
+        static final String notifications = "notifications";
+        static final String alarm = "alarm";
 
         //AutoVolumeActivity
         static final String autoVolumePreference = "activity_auto_volume";
         static final String micLevel = "mic_level";
         static final String micSensitivity = "mic_sensitivity";
         static final String interval = "interval";
+    }
+
+    static final class isGuideShownPreference {
+        static final String preferenceName = "is_guide_shown";
+        static final String detailSetting = "detail_setting";
+        static final String autoVolumeActivity = "auto_volume_activity";
+    }
+
+    static final class GuideViewValues {
+        static final int titleTextSize = 20;
+        static final int contentTextSize = 16;
+        static Spannable contentSpan(String text) {
+            return (Spannable) Html.fromHtml(String.format("<font color='#43a047'>%s</p>", text));
+        }
     }
 
     static class StateValues {

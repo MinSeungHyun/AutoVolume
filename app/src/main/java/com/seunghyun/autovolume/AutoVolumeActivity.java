@@ -2,9 +2,12 @@ package com.seunghyun.autovolume;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -12,13 +15,16 @@ import android.widget.TextView;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import smartdevelop.ir.eram.showcaseviewlib.GuideView;
+
 public class AutoVolumeActivity extends AppCompatActivity {
     static boolean isRunning = false;
     private ProgressBar noiseProgressBar;
     private SeekBar micLevelSeekBar, micSensitivitySeekBar, intervalSeekBar;
     private TextView intervalTextView;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
+    private LinearLayout guideView_1, guideView_2, guideView_3, guideView_4;
+    private SharedPreferences autoVolumePreference, isGuideShownPreference;
+    private SharedPreferences.Editor autoVolumeEditor, isGuideShownEditor;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -34,11 +40,13 @@ public class AutoVolumeActivity extends AppCompatActivity {
         //초기화
         SaveValues.StateValues.micSensitivity = micSensitivitySeekBar.getProgress();
         SaveValues.StateValues.micLevel = micLevelSeekBar.getProgress();
-        noiseProgressBar.setMax(SaveValues.DefValues.noiseProgressBarMax - sharedPreferences.getInt(SaveValues.Keys.micSensitivity, SaveValues.DefValues.micSensitivity));
+        noiseProgressBar.setMax(SaveValues.DefValues.noiseProgressBarMax - autoVolumePreference.getInt(SaveValues.Keys.micSensitivity, SaveValues.DefValues.micSensitivity));
 
         if (!MeasuringSoundThread.isRunning)
             new MeasuringSoundThread().start();
         new ChangeProgressBarThread().start();
+
+        makeGuides();
     }
 
     /**
@@ -62,10 +70,16 @@ public class AutoVolumeActivity extends AppCompatActivity {
         micSensitivitySeekBar = findViewById(R.id.sensitivitySb);
         intervalSeekBar = findViewById(R.id.intervalSb);
         intervalTextView = findViewById(R.id.intervalTV);
+        guideView_1 = findViewById(R.id.guide_view_1);
+        guideView_2 = findViewById(R.id.guide_view_2);
+        guideView_3 = findViewById(R.id.guide_view_3);
+        guideView_4 = findViewById(R.id.guide_view_4);
 
-        //sharedPreferences 참조
-        sharedPreferences = getSharedPreferences(SaveValues.Keys.autoVolumePreference, MODE_PRIVATE);
-        editor = sharedPreferences.edit();
+        //autoVolumePreference 참조
+        autoVolumePreference = getSharedPreferences(SaveValues.Keys.autoVolumePreference, MODE_PRIVATE);
+        isGuideShownPreference = getSharedPreferences(SaveValues.isGuideShownPreference.preferenceName, MODE_PRIVATE);
+        autoVolumeEditor = autoVolumePreference.edit();
+        isGuideShownEditor = isGuideShownPreference.edit();
     }
 
     /**
@@ -73,10 +87,10 @@ public class AutoVolumeActivity extends AppCompatActivity {
      */
     private void reloadStates() {
         //저장했던 값 불러오기
-        micLevelSeekBar.setProgress(sharedPreferences.getInt(SaveValues.Keys.micLevel, SaveValues.DefValues.micLevel));
-        micSensitivitySeekBar.setProgress(sharedPreferences.getInt(SaveValues.Keys.micSensitivity, SaveValues.DefValues.micSensitivity));
+        micLevelSeekBar.setProgress(autoVolumePreference.getInt(SaveValues.Keys.micLevel, SaveValues.DefValues.micLevel));
+        micSensitivitySeekBar.setProgress(autoVolumePreference.getInt(SaveValues.Keys.micSensitivity, SaveValues.DefValues.micSensitivity));
 
-        int progressValue = sharedPreferences.getInt(SaveValues.Keys.interval, SaveValues.DefValues.changeInterval);
+        int progressValue = autoVolumePreference.getInt(SaveValues.Keys.interval, SaveValues.DefValues.changeInterval);
         intervalSeekBar.setProgress(progressValue);
         progressValue *= 5;
 
@@ -112,8 +126,8 @@ public class AutoVolumeActivity extends AppCompatActivity {
         micLevelSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                editor.putInt(SaveValues.Keys.micLevel, progress);
-                editor.apply();
+                autoVolumeEditor.putInt(SaveValues.Keys.micLevel, progress);
+                autoVolumeEditor.apply();
                 SaveValues.StateValues.micLevel = progress;
             }
 
@@ -130,8 +144,8 @@ public class AutoVolumeActivity extends AppCompatActivity {
         micSensitivitySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                editor.putInt(SaveValues.Keys.micSensitivity, progress);
-                editor.apply();
+                autoVolumeEditor.putInt(SaveValues.Keys.micSensitivity, progress);
+                autoVolumeEditor.apply();
                 noiseProgressBar.setMax(SaveValues.DefValues.noiseProgressBarMax - progress);
                 SaveValues.StateValues.micSensitivity = micSensitivitySeekBar.getProgress();
             }
@@ -149,8 +163,8 @@ public class AutoVolumeActivity extends AppCompatActivity {
         intervalSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                editor.putInt(SaveValues.Keys.interval, progress);
-                editor.apply();
+                autoVolumeEditor.putInt(SaveValues.Keys.interval, progress);
+                autoVolumeEditor.apply();
                 progress *= 5;
                 if (progress < 1) progress = 1;
                 SaveValues.StateValues.changeInterval = progress;
@@ -185,6 +199,87 @@ public class AutoVolumeActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
+    }
+
+    /**
+     * 가이드뷰 생성
+     */
+    private void makeGuides() {
+        if (!isGuideShownPreference.getBoolean(SaveValues.isGuideShownPreference.autoVolumeActivity, false)) {
+            new GuideView.Builder(this)
+                    .setTargetView(guideView_1)
+                    .setTitle(getString(R.string.mic_input))
+                    .setContentSpan(SaveValues.GuideViewValues.contentSpan(getString(R.string.mic_input_description)))
+                    .setTitleTypeFace(Typeface.defaultFromStyle(Typeface.BOLD))
+                    .setTitleTextSize(SaveValues.GuideViewValues.titleTextSize)
+                    .setContentTextSize(SaveValues.GuideViewValues.contentTextSize)
+                    .setGravity(GuideView.Gravity.center)
+                    .setDismissType(GuideView.DismissType.outside)
+                    .setGuideListener(new GuideView.GuideListener() {
+                        @Override
+                        public void onDismiss(View view) {
+                            makeGuide_2();
+                        }
+                    })
+                    .build()
+                    .show();
+            isGuideShownEditor.putBoolean(SaveValues.isGuideShownPreference.autoVolumeActivity, true);
+            isGuideShownEditor.apply();
+        }
+    }
+
+    private void makeGuide_2() {
+        new GuideView.Builder(this)
+                .setTargetView(guideView_2)
+                .setTitle(getString(R.string.mic_volume))
+                .setContentSpan(SaveValues.GuideViewValues.contentSpan(getString(R.string.mic_volume_description)))
+                .setTitleTypeFace(Typeface.defaultFromStyle(Typeface.BOLD))
+                .setTitleTextSize(SaveValues.GuideViewValues.titleTextSize)
+                .setContentTextSize(SaveValues.GuideViewValues.contentTextSize)
+                .setGravity(GuideView.Gravity.center)
+                .setDismissType(GuideView.DismissType.outside)
+                .setGuideListener(new GuideView.GuideListener() {
+                    @Override
+                    public void onDismiss(View view) {
+                        makeGuide_3();
+                    }
+                })
+                .build()
+                .show();
+    }
+
+    private void makeGuide_3() {
+        new GuideView.Builder(this)
+                .setTargetView(guideView_3)
+                .setTitle(getString(R.string.mic_sensitive))
+                .setContentSpan(SaveValues.GuideViewValues.contentSpan(getString(R.string.mic_sensitive_description)))
+                .setTitleTypeFace(Typeface.defaultFromStyle(Typeface.BOLD))
+                .setTitleTextSize(SaveValues.GuideViewValues.titleTextSize)
+                .setContentTextSize(SaveValues.GuideViewValues.contentTextSize)
+                .setGravity(GuideView.Gravity.center)
+                .setDismissType(GuideView.DismissType.outside)
+                .setGuideListener(new GuideView.GuideListener() {
+                    @Override
+                    public void onDismiss(View view) {
+                        makeGuide_4();
+                    }
+                })
+                .build()
+                .show();
+    }
+
+    private void makeGuide_4() {
+        new GuideView.Builder(this)
+                .setTargetView(guideView_4)
+                .setTitle(getString(R.string.volume_interval))
+                .setContentSpan(SaveValues.GuideViewValues.contentSpan(getString(R.string.volume_interval_description)))
+                .setTitleTypeFace(Typeface.defaultFromStyle(Typeface.BOLD))
+                .setTitleTextSize(SaveValues.GuideViewValues.titleTextSize)
+                .setContentTextSize(SaveValues.GuideViewValues.contentTextSize)
+                .setGravity(GuideView.Gravity.center)
+                .setDismissType(GuideView.DismissType.outside)
+                .build()
+                .show();
     }
 
     /**
