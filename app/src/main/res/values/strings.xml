@@ -26,7 +26,7 @@
     <string name="permission_denied_message">Mic Permission denied. You need to allow the Mic Permission directly to measure noise around.</string>
     <string name="permission_denied_toast">You need to allow the Mic Permission to measure noise around.</string>
     <string name="turn_off">TURN OFF</string>
-    <string name="detail_setting_description">Set detail of Auto Volume function. (Mic Volume, Mic Sensitivity, Volume Adjustment Interval)</string>
+    <string name="detail_setting_description">Set detail of Auto Volume function. Make sure to set this. It is recommended to set this. (Mic Volume, Mic Sensitivity, Volume Adjustment Interval)</string>
     <string name="mic_input_description">The volume of your smartphone will be adjusted depending on this value. \nThis value is calculated reflected the value of Mic volume and Mic Sensitivity.</string>
     <string name="mic_volume_description">The higher the value, the larger the microphone input value is measured.</string>
     <string name="mic_sensitive_description">The higher the value, the greater the range in which the microphone input value changes.</string>

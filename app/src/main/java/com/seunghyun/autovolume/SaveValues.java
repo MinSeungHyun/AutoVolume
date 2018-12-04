@@ -42,6 +42,7 @@ class SaveValues {
         static final String preferenceName = "is_guide_shown";
         static final String detailSetting = "detail_setting";
         static final String autoVolumeActivity = "auto_volume_activity";
+        static final String toggleGuide = "toggle_guide";
     }
 
     static final class GuideViewValues {

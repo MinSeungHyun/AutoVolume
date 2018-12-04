@@ -22,8 +22,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
-import android.text.Spannable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -86,6 +84,35 @@ public class MainActivity extends AppCompatActivity {
         reloadTextState();
         setListeners();
         makeGuides();
+    }
+
+    /**
+     * 액티비티가 전면에 보일 때 호출
+     */
+    protected void onResume() {
+        super.onResume();
+        boolean isDetailSettingShown = isGuideShownPreference.getBoolean(SaveValues.isGuideShownPreference.detailSetting, false);
+        boolean isToggleShown = !isGuideShownPreference.getBoolean(SaveValues.isGuideShownPreference.toggleGuide, false);
+        if (isDetailSettingShown && isToggleShown) {
+            new GuideView.Builder(this)
+                    .setTargetView(linearLayout_1)
+                    .setTitle(getString(R.string.detail_setting))
+                    .setContentSpan(SaveValues.GuideViewValues.contentSpan(getString(R.string.detail_setting_description)))
+                    .setTitleTypeFace(Typeface.defaultFromStyle(Typeface.BOLD))
+                    .setTitleTextSize(SaveValues.GuideViewValues.titleTextSize)
+                    .setContentTextSize(SaveValues.GuideViewValues.contentTextSize)
+                    .setGravity(GuideView.Gravity.center)
+                    .setDismissType(GuideView.DismissType.targetView)
+                    .setGuideListener(new GuideView.GuideListener() {
+                        @Override
+                        public void onDismiss(View view) {
+                            isGuideShownEditor.putBoolean(SaveValues.isGuideShownPreference.toggleGuide, true);
+                            isGuideShownEditor.apply();
+                        }
+                    })
+                    .build()
+                    .show();
+        }
     }
 
     /**
@@ -317,10 +344,15 @@ public class MainActivity extends AppCompatActivity {
                     .setContentTextSize(SaveValues.GuideViewValues.contentTextSize)
                     .setGravity(GuideView.Gravity.center)
                     .setDismissType(GuideView.DismissType.targetView)
+                    .setGuideListener(new GuideView.GuideListener() {
+                        @Override
+                        public void onDismiss(View view) {
+                            isGuideShownEditor.putBoolean(SaveValues.isGuideShownPreference.detailSetting, true);
+                            isGuideShownEditor.apply();
+                        }
+                    })
                     .build()
                     .show();
-            isGuideShownEditor.putBoolean(SaveValues.isGuideShownPreference.detailSetting, true);
-            isGuideShownEditor.apply();
         }
     }
 

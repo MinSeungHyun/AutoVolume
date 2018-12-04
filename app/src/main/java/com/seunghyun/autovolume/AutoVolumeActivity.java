@@ -223,8 +223,7 @@ public class AutoVolumeActivity extends AppCompatActivity {
                     })
                     .build()
                     .show();
-            isGuideShownEditor.putBoolean(SaveValues.isGuideShownPreference.autoVolumeActivity, true);
-            isGuideShownEditor.apply();
+
         }
     }
 
@@ -278,6 +277,13 @@ public class AutoVolumeActivity extends AppCompatActivity {
                 .setContentTextSize(SaveValues.GuideViewValues.contentTextSize)
                 .setGravity(GuideView.Gravity.center)
                 .setDismissType(GuideView.DismissType.outside)
+                .setGuideListener(new GuideView.GuideListener() {
+                    @Override
+                    public void onDismiss(View view) {
+                        isGuideShownEditor.putBoolean(SaveValues.isGuideShownPreference.autoVolumeActivity, true);
+                        isGuideShownEditor.apply();
+                    }
+                })
                 .build()
                 .show();
     }
