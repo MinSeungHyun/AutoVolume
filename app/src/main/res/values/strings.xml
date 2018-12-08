@@ -35,4 +35,5 @@
     <string name="switch_description">Click each icon to turn Auto Volume function on or off for that volume.</string>
     <string name="volume_range_title">Volume Adjustment Range</string>
     <string name="volume_range_description">Click to set the range in which the volume changes. When the function is turned on, the volume is adjusted only within the set range.</string>
+    <string name="turn_off_in_app">App is running. Please turn off in app.</string>
 </resources>

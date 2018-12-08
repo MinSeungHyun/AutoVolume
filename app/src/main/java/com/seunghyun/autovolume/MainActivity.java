@@ -343,22 +343,22 @@ public class MainActivity extends AppCompatActivity {
                     .setTargetView(linearLayout_1)
                     .setTitle(getString(R.string.switch_title))
                     .setContentSpan(SaveValues.GuideViewValues.contentSpan(getString(R.string.switch_description)))
-                                   .setTitleTypeFace(Typeface.defaultFromStyle(Typeface.BOLD))
+                    .setTitleTypeFace(Typeface.defaultFromStyle(Typeface.BOLD))
+                    .setTitleTextSize(SaveValues.GuideViewValues.titleTextSize)
+                    .setContentTextSize(SaveValues.GuideViewValues.contentTextSize)
+                    .setGravity(GuideView.Gravity.center)
+                    .setDismissType(GuideView.DismissType.outside)
+                    .setGuideListener(new GuideView.GuideListener() {
+                        @Override
+                        public void onDismiss(View view) {
+                            new GuideView.Builder(MainActivity.this)
+                                    .setTargetView(rangeLinearLayout_1)
+                                    .setTitle(getString(R.string.volume_range_title))
+                                    .setContentSpan(SaveValues.GuideViewValues.contentSpan(getString(R.string.volume_range_description)))
+                                    .setTitleTypeFace(Typeface.defaultFromStyle(Typeface.BOLD))
                                     .setTitleTextSize(SaveValues.GuideViewValues.titleTextSize)
                                     .setContentTextSize(SaveValues.GuideViewValues.contentTextSize)
                                     .setGravity(GuideView.Gravity.center)
-                                    .setDismissType(GuideView.DismissType.outside)
-                                    .setGuideListener(new GuideView.GuideListener() {
-                                        @Override
-                                        public void onDismiss(View view) {
-                                            new GuideView.Builder(MainActivity.this)
-                                                    .setTargetView(rangeLinearLayout_1)
-                                                    .setTitle(getString(R.string.volume_range_title))
-                                                    .setContentSpan(SaveValues.GuideViewValues.contentSpan(getString(R.string.volume_range_description)))
-                                                    .setTitleTypeFace(Typeface.defaultFromStyle(Typeface.BOLD))
-                                                    .setTitleTextSize(SaveValues.GuideViewValues.titleTextSize)
-                                                    .setContentTextSize(SaveValues.GuideViewValues.contentTextSize)
-                                                    .setGravity(GuideView.Gravity.center)
                                     .setDismissType(GuideView.DismissType.targetView)
                                     .setGuideListener(new GuideView.GuideListener() {
                                         @Override

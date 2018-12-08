@@ -30,7 +30,6 @@
         </activity>
         <activity
             android:name=".RangePopupActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Dialog" />
         <activity
             android:name=".TurnOffActivity"
