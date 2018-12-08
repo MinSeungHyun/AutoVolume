@@ -31,4 +31,8 @@
     <string name="mic_volume_description">높을수록 마이크 입력값이 더 크게 측정됩니다.</string>
     <string name="mic_sensitive_description">높을수록 마이크 입력값이 변하는 범위가 커집니다.</string>
     <string name="volume_interval_description">볼륨이 조절되는 간격입니다. 설정한 시간 동안 마이크 입력값의 평균치를 구하고 이에 따라 볼륨을 조절합니다.</string>
+    <string name="switch_title">자동볼륨 기능 켜기</string>
+    <string name="switch_description">각 아이콘을 클릭하여 해당 볼륨의 자동 조절 기능을 키거나 끌 수 있습니다.</string>
+    <string name="volume_range_title">볼륨 변경 범위</string>
+    <string name="volume_range_description">클릭하여 볼륨이 변경되는 범위를 설정할 수 있습니다. 기능이 켜져 있을 때 볼륨은 설정된 범위 내에서만 조절됩니다.</string>
 </resources>

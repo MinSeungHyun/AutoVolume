@@ -31,4 +31,8 @@
     <string name="mic_volume_description">The higher the value, the larger the microphone input value is measured.</string>
     <string name="mic_sensitive_description">The higher the value, the greater the range in which the microphone input value changes.</string>
     <string name="volume_interval_description">The interval to adjust volume. The average value of the Mic Input Value is obtained during the set time and the volume is adjusted accordingly.</string>
+    <string name="switch_title">Turn On Auto Volume Function</string>
+    <string name="switch_description">Click each icon to turn Auto Volume function on or off for that volume.</string>
+    <string name="volume_range_title">Volume Adjustment Range</string>
+    <string name="volume_range_description">Click to set the range in which the volume changes. When the function is turned on, the volume is adjusted only within the set range.</string>
 </resources>

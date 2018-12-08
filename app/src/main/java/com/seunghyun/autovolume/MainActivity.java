@@ -91,28 +91,7 @@ public class MainActivity extends AppCompatActivity {
      */
     protected void onResume() {
         super.onResume();
-        boolean isDetailSettingShown = isGuideShownPreference.getBoolean(SaveValues.isGuideShownPreference.detailSetting, false);
-        boolean isToggleShown = !isGuideShownPreference.getBoolean(SaveValues.isGuideShownPreference.toggleGuide, false);
-        if (isDetailSettingShown && isToggleShown) {
-            new GuideView.Builder(this)
-                    .setTargetView(linearLayout_1)
-                    .setTitle(getString(R.string.detail_setting))
-                    .setContentSpan(SaveValues.GuideViewValues.contentSpan(getString(R.string.detail_setting_description)))
-                    .setTitleTypeFace(Typeface.defaultFromStyle(Typeface.BOLD))
-                    .setTitleTextSize(SaveValues.GuideViewValues.titleTextSize)
-                    .setContentTextSize(SaveValues.GuideViewValues.contentTextSize)
-                    .setGravity(GuideView.Gravity.center)
-                    .setDismissType(GuideView.DismissType.targetView)
-                    .setGuideListener(new GuideView.GuideListener() {
-                        @Override
-                        public void onDismiss(View view) {
-                            isGuideShownEditor.putBoolean(SaveValues.isGuideShownPreference.toggleGuide, true);
-                            isGuideShownEditor.apply();
-                        }
-                    })
-                    .build()
-                    .show();
-        }
+        makeSecondGuides();
     }
 
     /**
@@ -349,6 +328,47 @@ public class MainActivity extends AppCompatActivity {
                         public void onDismiss(View view) {
                             isGuideShownEditor.putBoolean(SaveValues.isGuideShownPreference.detailSetting, true);
                             isGuideShownEditor.apply();
+                        }
+                    })
+                    .build()
+                    .show();
+        }
+    }
+
+    private void makeSecondGuides() {
+        boolean isDetailSettingShown = isGuideShownPreference.getBoolean(SaveValues.isGuideShownPreference.detailSetting, false);
+        boolean isToggleShown = !isGuideShownPreference.getBoolean(SaveValues.isGuideShownPreference.mainActivity, false);
+        if (isDetailSettingShown && isToggleShown) {
+            new GuideView.Builder(this)
+                    .setTargetView(linearLayout_1)
+                    .setTitle(getString(R.string.switch_title))
+                    .setContentSpan(SaveValues.GuideViewValues.contentSpan(getString(R.string.switch_description)))
+                                   .setTitleTypeFace(Typeface.defaultFromStyle(Typeface.BOLD))
+                                    .setTitleTextSize(SaveValues.GuideViewValues.titleTextSize)
+                                    .setContentTextSize(SaveValues.GuideViewValues.contentTextSize)
+                                    .setGravity(GuideView.Gravity.center)
+                                    .setDismissType(GuideView.DismissType.outside)
+                                    .setGuideListener(new GuideView.GuideListener() {
+                                        @Override
+                                        public void onDismiss(View view) {
+                                            new GuideView.Builder(MainActivity.this)
+                                                    .setTargetView(rangeLinearLayout_1)
+                                                    .setTitle(getString(R.string.volume_range_title))
+                                                    .setContentSpan(SaveValues.GuideViewValues.contentSpan(getString(R.string.volume_range_description)))
+                                                    .setTitleTypeFace(Typeface.defaultFromStyle(Typeface.BOLD))
+                                                    .setTitleTextSize(SaveValues.GuideViewValues.titleTextSize)
+                                                    .setContentTextSize(SaveValues.GuideViewValues.contentTextSize)
+                                                    .setGravity(GuideView.Gravity.center)
+                                    .setDismissType(GuideView.DismissType.targetView)
+                                    .setGuideListener(new GuideView.GuideListener() {
+                                        @Override
+                                        public void onDismiss(View view) {
+                                            isGuideShownEditor.putBoolean(SaveValues.isGuideShownPreference.mainActivity, true);
+                                            isGuideShownEditor.apply();
+                                        }
+                                    })
+                                    .build()
+                                    .show();
                         }
                     })
                     .build()
