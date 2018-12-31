@@ -24,6 +24,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -83,7 +84,9 @@ public class MainActivity extends AppCompatActivity {
         reloadSwitchState();
         reloadTextState();
         setListeners();
-        makeGuides();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+            makeGuides();
+        }
     }
 
     /**
@@ -322,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
                     .setTitleTextSize(SaveValues.GuideViewValues.titleTextSize)
                     .setContentTextSize(SaveValues.GuideViewValues.contentTextSize)
                     .setGravity(GuideView.Gravity.center)
-                    .setDismissType(GuideView.DismissType.targetView)
+                    .setDismissType(GuideView.DismissType.outside)
                     .setGuideListener(new GuideView.GuideListener() {
                         @Override
                         public void onDismiss(View view) {
@@ -359,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
                                     .setTitleTextSize(SaveValues.GuideViewValues.titleTextSize)
                                     .setContentTextSize(SaveValues.GuideViewValues.contentTextSize)
                                     .setGravity(GuideView.Gravity.center)
-                                    .setDismissType(GuideView.DismissType.targetView)
+                                    .setDismissType(GuideView.DismissType.outside)
                                     .setGuideListener(new GuideView.GuideListener() {
                                         @Override
                                         public void onDismiss(View view) {
@@ -459,6 +462,13 @@ public class MainActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .create()
                 .show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //여기에 딜레이 후 시작할 작업들을 입력
+                makeGuides();
+            }
+        }, 2000);
     }
 
     /**
@@ -508,17 +518,21 @@ public class MainActivity extends AppCompatActivity {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             // permission was granted.
             Log.d("Permission", "Granted");
+            makeGuides();
         } else {
             // permission denied.
             if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
 
-                Toast.makeText(getApplicationContext(), getString(R.string.permission_denied_toast), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.permission_denied_toast), Toast.LENGTH_LONG).show();
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         //여기에 딜레이 후 시작할 작업들을 입력
                         ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                     }
                 }, 2000);
             }
