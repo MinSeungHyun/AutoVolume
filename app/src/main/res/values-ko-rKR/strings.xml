@@ -36,4 +36,5 @@
     <string name="volume_range_title">볼륨 변경 범위</string>
     <string name="volume_range_description">클릭하여 볼륨이 변경되는 범위를 설정할 수 있습니다. 기능이 켜져 있을 때 볼륨은 설정된 범위 내에서만 조절됩니다.</string>
     <string name="turn_off_in_app">앱이 실행중입니다. 앱에서 기능을 꺼주세요.</string>
+    <string name="additional_settings">추가 설정</string>
 </resources>

@@ -36,4 +36,5 @@
     <string name="volume_range_title">Volume Adjustment Range</string>
     <string name="volume_range_description">Click to set the range in which the volume changes. When the function is turned on, the volume is adjusted only within the set range.</string>
     <string name="turn_off_in_app">App is running. Please turn off in app.</string>
+    <string name="additional_settings">Additional Settings</string>
 </resources>

@@ -125,5 +125,15 @@
                 android:max="60"
                 android:progress="5" />
         </LinearLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:text="@string/additional_settings"
+            android:textColor="#ffffff"
+            android:textSize="18dp" />
     </LinearLayout>
 </ScrollView>
