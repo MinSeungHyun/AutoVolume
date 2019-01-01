@@ -329,6 +329,7 @@ public class MainActivity extends AppCompatActivity {
                     .setGuideListener(new GuideView.GuideListener() {
                         @Override
                         public void onDismiss(View view) {
+                            startActivity(new Intent(MainActivity.this, AutoVolumeActivity.class));
                             isGuideShownEditor.putBoolean(SaveValues.isGuideShownPreference.detailSetting, true);
                             isGuideShownEditor.apply();
                         }
@@ -366,6 +367,10 @@ public class MainActivity extends AppCompatActivity {
                                     .setGuideListener(new GuideView.GuideListener() {
                                         @Override
                                         public void onDismiss(View view) {
+                                            Intent intent = new Intent(MainActivity.this, RangePopupActivity.class);
+                                            intent.putExtra(SaveValues.Keys.viewName, SaveValues.Keys.ringtone);
+                                            startActivity(intent);
+
                                             isGuideShownEditor.putBoolean(SaveValues.isGuideShownPreference.mainActivity, true);
                                             isGuideShownEditor.apply();
                                         }
