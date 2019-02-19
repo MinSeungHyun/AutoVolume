@@ -32,18 +32,6 @@ public class AutoVolumeService extends Service {
     private int[] sum = new int[4];
     private int[] volume = new int[4];
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        startForeground(1, builder.build());
-
-        return super.onStartCommand(intent, flags, startId);
-    }
-
     /**
      * 서비스가 최초 시작될때 호출
      */
@@ -80,6 +68,64 @@ public class AutoVolumeService extends Service {
         new CalculatingThread().start();
     }
 
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    /**
+     * stopService 로 중지될 떄마다 호출
+     */
+    @Override
+    public void onDestroy() {
+        isRunning = false;
+        EventBus.getDefault().unregister(this); //EventBus unregister
+        if (!AutoVolumeActivity.isRunning) new MeasuringSoundThread().interrupt();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        startForeground(1, builder.build());
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    /**
+     * 알림 설정
+     */
+    private void setNotification() {
+        //SDK 가 26이상이면 channel 설정, 아니면 일반 설정
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder = new Notification.Builder(AutoVolumeService.this, "notification");
+
+            NotificationChannel notificationChannel = new NotificationChannel("notification", getString(R.string.app_name), NotificationManager.IMPORTANCE_MIN);
+            notificationChannel.setShowBadge(false);
+            Objects.requireNonNull(notificationManager).createNotificationChannel(notificationChannel);
+        } else {
+            builder = new Notification.Builder(AutoVolumeService.this);
+        }
+
+        //알림 클릭시 나올 액티비티
+        PendingIntent pendingIntent = PendingIntent.getActivity(AutoVolumeService.this,
+                0,
+                new Intent(getApplicationContext(), MainActivity.class),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //알림에서 버튼 클릭시 나올 액티비티
+        PendingIntent buttonIntent = PendingIntent.getActivity(AutoVolumeService.this,
+                1,
+                new Intent(getApplicationContext(), TurnOffActivity.class),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification.Action action = new Notification.Action(R.drawable.notification_icon, getString(R.string.turn_off), buttonIntent);
+        builder.setSmallIcon(R.drawable.notification_icon)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(getString(R.string.notification_content))
+                .setContentIntent(pendingIntent)
+                .addAction(action);
+    }
+
     /**
      * MinMaxValueEvent 를 받아서 볼륨 범위를 변경 from RangePopupActivity
      */
@@ -103,16 +149,6 @@ public class AutoVolumeService extends Service {
                 alarmMax = event.maxValue;
                 break;
         }
-    }
-
-    /**
-     * stopService 로 중지될 떄마다 호출
-     */
-    @Override
-    public void onDestroy() {
-        isRunning = false;
-        EventBus.getDefault().unregister(this); //EventBus unregister
-        if (!AutoVolumeActivity.isRunning) new MeasuringSoundThread().interrupt();
     }
 
     /**
@@ -203,42 +239,6 @@ public class AutoVolumeService extends Service {
             if (volume[3] < 1) volume[3] = 1;
             audioManager.setStreamVolume(AudioManager.STREAM_ALARM, volume[3], AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
         }
-    }
-
-    /**
-     * 알림 설정
-     */
-    private void setNotification() {
-        //SDK 가 26이상이면 channel 설정, 아니면 일반 설정
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder = new Notification.Builder(AutoVolumeService.this, "notification");
-
-            NotificationChannel notificationChannel = new NotificationChannel("notification", getString(R.string.app_name), NotificationManager.IMPORTANCE_MIN);
-            notificationChannel.setShowBadge(false);
-            Objects.requireNonNull(notificationManager).createNotificationChannel(notificationChannel);
-        } else {
-            builder = new Notification.Builder(AutoVolumeService.this);
-        }
-
-        //알림 클릭시 나올 액티비티
-        PendingIntent pendingIntent = PendingIntent.getActivity(AutoVolumeService.this,
-                0,
-                new Intent(getApplicationContext(), MainActivity.class),
-                PendingIntent.FLAG_UPDATE_CURRENT);
-
-        //알림에서 버튼 클릭시 나올 액티비티
-        PendingIntent buttonIntent = PendingIntent.getActivity(AutoVolumeService.this,
-                1,
-                new Intent(getApplicationContext(), TurnOffActivity.class),
-                PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Notification.Action action = new Notification.Action(R.drawable.notification_icon, getString(R.string.turn_off), buttonIntent);
-        builder.setSmallIcon(R.drawable.notification_icon)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText(getString(R.string.notification_content))
-                .setContentIntent(pendingIntent)
-                .addAction(action);
     }
 
     /**
